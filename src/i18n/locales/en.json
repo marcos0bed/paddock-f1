@@ -189,6 +189,7 @@
     "airTemp": "Air",
     "tyreStrategy": "Tyre strategy",
     "pitCount_one": "{{count}} pit",
-    "pitCount_other": "{{count}} pits"
+    "pitCount_other": "{{count}} pits",
+    "restrictedBanner": "Live session in progress — showing what was already loaded."
   }
 }

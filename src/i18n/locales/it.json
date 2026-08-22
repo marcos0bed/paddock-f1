@@ -189,6 +189,7 @@
     "airTemp": "Aria",
     "tyreStrategy": "Strategia gomme",
     "pitCount_one": "{{count}} sosta",
-    "pitCount_other": "{{count}} soste"
+    "pitCount_other": "{{count}} soste",
+    "restrictedBanner": "Sessione in diretta — viene mostrato ciò che era già caricato."
   }
 }

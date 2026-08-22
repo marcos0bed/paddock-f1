@@ -189,6 +189,7 @@
     "airTemp": "Luft",
     "tyreStrategy": "Reifenstrategie",
     "pitCount_one": "{{count}} Stopp",
-    "pitCount_other": "{{count}} Stopps"
+    "pitCount_other": "{{count}} Stopps",
+    "restrictedBanner": "Live-Session läuft — zeigt, was bereits geladen wurde."
   }
 }

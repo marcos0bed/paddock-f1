@@ -417,58 +417,66 @@ export function Weekend() {
     if (target) setOpenKey(target.session_key)
   }, [sessions, openKey])
 
-  if (isLoading) {
-    return (
-      <Page title={t('weekend.title')}>
-        <LoadingRows rows={5} />
-      </Page>
-    )
-  }
+  // React Query keeps the last successful `meeting`/`sessions` around even
+  // when a later background refetch fails — that's exactly the case during a
+  // live session, when OpenF1 blocks every request. Gate the full-page
+  // notices on having NO usable data at all (a cold open during the block
+  // window); once we have something, show it, and demote the block to a
+  // small banner instead of hiding sessions the user already looked at.
+  const hasData = Boolean(meeting) && sessions.length > 0
 
-  if (restricted) {
-    return (
-      <Page title={t('weekend.title')} eyebrow={t('nav.weekend')}>
-        <div className="panel relative overflow-hidden p-6">
-          <div
-            className="hazard absolute inset-x-0 top-0 h-1.5"
-            style={{ ['--hazard' as string]: 'var(--color-flag-yellow)' }}
-          />
-          <h2 className="font-display text-xl font-700 tracking-wide text-ink uppercase">
-            {t('weekend.restrictedTitle')}
-          </h2>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-dim">
-            {t('weekend.restrictedBody')}
-          </p>
-          <div className="mt-5 flex flex-wrap gap-3">
-            <a
-              href={OPENF1_PLANS}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="border border-flag-yellow/50 px-4 py-2 text-xs font-700 tracking-widest text-flag-yellow uppercase transition hover:bg-flag-yellow/10"
-            >
-              {t('live.restricted.cta')}
-            </a>
-            <Link
-              to="/schedule"
-              className="border border-line-bright px-4 py-2 text-xs font-700 tracking-widest text-ink-dim uppercase transition hover:text-ink"
-            >
-              {t('live.restricted.dismiss')}
-            </Link>
+  if (!hasData) {
+    if (isLoading) {
+      return (
+        <Page title={t('weekend.title')}>
+          <LoadingRows rows={5} />
+        </Page>
+      )
+    }
+
+    if (restricted) {
+      return (
+        <Page title={t('weekend.title')} eyebrow={t('nav.weekend')}>
+          <div className="panel relative overflow-hidden p-6">
+            <div
+              className="hazard absolute inset-x-0 top-0 h-1.5"
+              style={{ ['--hazard' as string]: 'var(--color-flag-yellow)' }}
+            />
+            <h2 className="font-display text-xl font-700 tracking-wide text-ink uppercase">
+              {t('weekend.restrictedTitle')}
+            </h2>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-dim">
+              {t('weekend.restrictedBody')}
+            </p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <a
+                href={OPENF1_PLANS}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="border border-flag-yellow/50 px-4 py-2 text-xs font-700 tracking-widest text-flag-yellow uppercase transition hover:bg-flag-yellow/10"
+              >
+                {t('live.restricted.cta')}
+              </a>
+              <Link
+                to="/schedule"
+                className="border border-line-bright px-4 py-2 text-xs font-700 tracking-widest text-ink-dim uppercase transition hover:text-ink"
+              >
+                {t('live.restricted.dismiss')}
+              </Link>
+            </div>
           </div>
-        </div>
-      </Page>
-    )
-  }
+        </Page>
+      )
+    }
 
-  if (error) {
-    return (
-      <Page title={t('weekend.title')}>
-        <ErrorState error={error} onRetry={refetch} />
-      </Page>
-    )
-  }
+    if (error) {
+      return (
+        <Page title={t('weekend.title')}>
+          <ErrorState error={error} onRetry={refetch} />
+        </Page>
+      )
+    }
 
-  if (!meeting || sessions.length === 0) {
     return (
       <Page title={t('weekend.title')}>
         <div className="panel px-6 py-14 text-center">
@@ -478,11 +486,37 @@ export function Weekend() {
     )
   }
 
-  const iso = countryIso(meeting.country_name)
+  // Narrowed once here — `hasData` already guarantees this above, but the
+  // compiler can't follow that through a derived boolean.
+  const activeMeeting = meeting!
+  const iso = countryIso(activeMeeting.country_name)
 
   return (
     <Page>
       <div className="flex flex-col gap-4">
+        {(restricted || Boolean(error)) && (
+          <div className="panel relative flex items-center gap-3 overflow-hidden px-4 py-3">
+            <div
+              className="hazard absolute inset-x-0 top-0 h-1"
+              style={{
+                ['--hazard' as string]: restricted
+                  ? 'var(--color-flag-yellow)'
+                  : 'var(--color-flag-red)',
+              }}
+            />
+            <span className="flex-1 text-sm text-ink-dim">
+              {restricted ? t('weekend.restrictedBanner') : t('common.errorBody')}
+            </span>
+            <button
+              type="button"
+              onClick={refetch}
+              className="shrink-0 border border-line-bright px-3 py-1.5 text-[0.65rem] font-700 tracking-widest text-ink-dim uppercase transition hover:border-speed hover:text-speed"
+            >
+              {t('common.retry')}
+            </button>
+          </div>
+        )}
+
         <header className="panel relative overflow-hidden p-5">
           <div
             className="hazard absolute inset-x-0 top-0 h-1"
@@ -491,15 +525,17 @@ export function Weekend() {
           <p className="eyebrow mb-1.5">{t('weekend.title')}</p>
           <h1 className="flex items-center gap-3 font-display text-3xl leading-tight font-700 tracking-tight text-ink uppercase sm:text-4xl">
             <span aria-hidden>{flagEmoji(iso)}</span>
-            {meeting.meeting_name}
+            {activeMeeting.meeting_name}
           </h1>
           <p className="mt-1 text-sm text-ink-faint">
             {/* At many venues the circuit and the town share a name
                 (Zandvoort, Monza, Spa) — don't print it twice. */}
             {[
-              meeting.circuit_short_name,
-              meeting.location === meeting.circuit_short_name ? null : meeting.location,
-              localizedCountry(meeting.country_name, locale),
+              activeMeeting.circuit_short_name,
+              activeMeeting.location === activeMeeting.circuit_short_name
+                ? null
+                : activeMeeting.location,
+              localizedCountry(activeMeeting.country_name, locale),
             ]
               .filter(Boolean)
               .join(' · ')}

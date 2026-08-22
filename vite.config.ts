@@ -66,7 +66,29 @@ export default defineConfig({
             },
           },
           {
-            // Live timing must never be served stale.
+            // Weekend metadata and finished-session results: once a session
+            // ends this is immutable, and it's exactly what a live-session
+            // block hides — OpenF1's free tier blocks EVERY request (history
+            // included) during the ±30min window around any session, so
+            // without this a user who opens the app mid-block sees nothing
+            // even for a session they successfully loaded five minutes
+            // earlier. StaleWhileRevalidate still attempts a fresh fetch on
+            // every request; during a block that attempt just fails quietly
+            // (same as today) while the last-good cached copy is served
+            // instantly. Must come before the catch-all NetworkOnly rule
+            // below — Workbox uses the first matching pattern.
+            urlPattern:
+              /^https:\/\/api\.openf1\.org\/v1\/(meetings|sessions|drivers|session_result|pit|weather|stints)(\?|$)/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'openf1-weekend',
+              expiration: { maxEntries: 500, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+          {
+            // Position/interval/lap feeds: this is the live timing tower
+            // itself, must never be served stale.
             urlPattern: /^https:\/\/api\.openf1\.org\/.*/i,
             handler: 'NetworkOnly',
           },
