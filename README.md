@@ -56,6 +56,11 @@ npm run build -- --base=/<repo-name>/
 Building without `--base` (the default `/`) produces a bundle that 404s on every
 asset when served from a subdirectory.
 
+The build also copies `index.html` to `404.html`. GitHub Pages has no SPA
+rewrite rule, so a deep link like `/paddock-f1/standings` would otherwise 404 on
+reload or when shared — Pages serves `404.html` for unknown paths, and making
+that file the app itself lets the client-side router take over.
+
 ## Architecture
 
 ```
