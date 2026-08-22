@@ -32,7 +32,8 @@
     "points_other": "points",
     "win_one": "win",
     "win_other": "wins",
-    "close": "Close"
+    "close": "Close",
+    "rateLimited": "Too many requests right now — give it a moment and try again."
   },
   "home": {
     "nextRace": "Next race",

@@ -65,14 +65,24 @@ async function get<T>(path: string, params: Record<string, string | number> = {}
   const url = new URL(`${BASE}/${path}`)
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, String(v))
 
-  const res = await throttle(() =>
-    fetch(url, {
-    headers: {
-        Accept: 'application/json',
-        ...(API_KEY ? { Authorization: `Bearer ${API_KEY}` } : {}),
-      },
-    }),
-  )
+  let res: Response
+  try {
+    res = await throttle(() =>
+      fetch(url, {
+        headers: {
+          Accept: 'application/json',
+          ...(API_KEY ? { Authorization: `Bearer ${API_KEY}` } : {}),
+        },
+      }),
+    )
+  } catch {
+    // A rejected fetch — offline, DNS failure, or (seen on a real iPhone) the
+    // service worker's own NetworkOnly handler failing with an internal
+    // "no-response" error. Whatever the cause, the raw message is browser/SW
+    // plumbing, not something to show a user; wrap it so every caller deals
+    // in typed errors and ErrorState never has to render engine internals.
+    throw new OpenF1Error('Could not reach the live timing service.')
+  }
 
   if (res.status === 429) {
     throw new OpenF1Error('Too many requests to the live data service. Try again shortly.', 429)

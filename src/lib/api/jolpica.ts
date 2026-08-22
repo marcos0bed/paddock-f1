@@ -90,7 +90,16 @@ async function get<T>(path: string, params: Record<string, string | number> = {}
   const url = new URL(`${BASE}/${path}.json`)
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, String(v))
 
-  const res = await throttle(() => fetchWithRetry(url))
+  let res: Response
+  try {
+    res = await throttle(() => fetchWithRetry(url))
+  } catch {
+    // A rejected fetch — offline, DNS failure, or the service worker's own
+    // handler failing internally. That message is browser/SW plumbing, not
+    // something to show a user; wrap it so ErrorState never has to render
+    // engine internals.
+    throw new JolpicaError('Could not reach the F1 data service.')
+  }
   if (!res.ok) {
     throw new JolpicaError(
       res.status === 429

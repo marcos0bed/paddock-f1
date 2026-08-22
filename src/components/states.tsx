@@ -1,5 +1,8 @@
 import { useTranslation } from 'react-i18next'
 
+import { JolpicaError } from '../lib/api/jolpica'
+import { OpenF1Error } from '../lib/api/openf1'
+
 /** Skeleton rows that match the timing-table rhythm, so nothing jumps on load. */
 export function LoadingRows({ rows = 8 }: { rows?: number }) {
   const { t } = useTranslation()
@@ -17,9 +20,22 @@ export function LoadingRows({ rows = 8 }: { rows?: number }) {
   )
 }
 
+/**
+ * What to show for a given error. Deliberately a whitelist, not "does it have
+ * a .message" — an arbitrary Error can carry browser or service-worker
+ * plumbing (one real example: a Workbox-internal "no-response" string seen on
+ * an iPhone when a fetch failed inside the SW). Only our own typed API errors
+ * get to pick a specific, translated message; everything else falls back to
+ * the generic one rather than rendering engine internals at a user.
+ */
+function errorMessage(error: unknown, t: ReturnType<typeof useTranslation>['t']): string {
+  const isApiError = error instanceof JolpicaError || error instanceof OpenF1Error
+  if (isApiError && error.status === 429) return t('common.rateLimited')
+  return t('common.errorBody')
+}
+
 export function ErrorState({ error, onRetry }: { error?: unknown; onRetry?: () => void }) {
   const { t } = useTranslation()
-  const detail = error instanceof Error ? error.message : null
 
   return (
     <div className="panel flex flex-col items-center gap-3 px-6 py-14 text-center">
@@ -27,7 +43,7 @@ export function ErrorState({ error, onRetry }: { error?: unknown; onRetry?: () =
       <h2 className="font-display text-2xl font-600 tracking-wide text-ink uppercase">
         {t('common.error')}
       </h2>
-      <p className="max-w-sm text-sm text-ink-dim">{detail ?? t('common.errorBody')}</p>
+      <p className="max-w-sm text-sm text-ink-dim">{errorMessage(error, t)}</p>
       {onRetry && (
         <button
           type="button"

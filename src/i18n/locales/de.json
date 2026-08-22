@@ -32,7 +32,8 @@
     "points_other": "Punkte",
     "win_one": "Sieg",
     "win_other": "Siege",
-    "close": "Schließen"
+    "close": "Schließen",
+    "rateLimited": "Gerade zu viele Anfragen — warte einen Moment und versuch es erneut."
   },
   "home": {
     "nextRace": "Nächstes Rennen",

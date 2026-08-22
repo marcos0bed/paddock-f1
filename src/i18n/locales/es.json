@@ -32,7 +32,8 @@
     "points_other": "puntos",
     "win_one": "victoria",
     "win_other": "victorias",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "rateLimited": "Demasiadas peticiones ahora mismo — espera un momento e inténtalo de nuevo."
   },
   "home": {
     "nextRace": "Próxima carrera",
