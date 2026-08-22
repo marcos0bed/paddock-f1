@@ -29,15 +29,42 @@ export class JolpicaError extends Error {
  * endpoint no longer exists. Funnelling every request through one queue means
  * callers can fire them all with Promise.all without thinking about pacing;
  * this serialises the actual network calls at a safe ~3.7/s regardless.
+ *
+ * The gap only applies when it's earned: once the service worker has these
+ * responses cached (see vite.config.ts), a repeat fetch resolves in a couple
+ * of milliseconds — pacing those at 270ms apart too would make a warm cache
+ * feel exactly as slow as a cold one, defeating the point of caching a
+ * 77-request career fetch in the first place. A fetch that resolves fast
+ * almost certainly didn't hit Jolpica's server, so only fetches slower than
+ * the threshold pay the pacing tax.
  */
 const MIN_GAP_MS = 270
+const CACHE_HIT_THRESHOLD_MS = 30
 let chain: Promise<unknown> = Promise.resolve()
 
 function throttle<T>(task: () => Promise<T>): Promise<T> {
-  const run = chain.then(task, task)
+  let gapMs = 0
+  const run = chain.then(
+    async () => {
+      const started = performance.now()
+      try {
+        return await task()
+      } finally {
+        gapMs = performance.now() - started > CACHE_HIT_THRESHOLD_MS ? MIN_GAP_MS : 0
+      }
+    },
+    async () => {
+      const started = performance.now()
+      try {
+        return await task()
+      } finally {
+        gapMs = performance.now() - started > CACHE_HIT_THRESHOLD_MS ? MIN_GAP_MS : 0
+      }
+    },
+  )
   chain = run.then(
-    () => new Promise((r) => setTimeout(r, MIN_GAP_MS)),
-    () => new Promise((r) => setTimeout(r, MIN_GAP_MS)),
+    () => (gapMs > 0 ? new Promise<void>((r) => setTimeout(r, gapMs)) : undefined),
+    () => (gapMs > 0 ? new Promise<void>((r) => setTimeout(r, gapMs)) : undefined),
   )
   return run
 }
