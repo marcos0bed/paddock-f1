@@ -86,7 +86,9 @@ export function NextRaceHero({ race, totalRounds }: { race: Race; totalRounds: n
             </span>
           )}
           <span>{race.Circuit.circuitName}</span>
-          <span className="text-ink-faint">·</span>
+          {/* Hidden once the line wraps, so the separator never dangles at the
+              end of a row on a narrow phone. */}
+          <span className="hidden text-ink-faint sm:inline">·</span>
           <span>
             {race.Circuit.Location.locality},{' '}
             {localizedCountry(race.Circuit.Location.country, locale)}

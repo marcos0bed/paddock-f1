@@ -48,7 +48,10 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-dvh lg:grid lg:grid-cols-[15rem_1fr]">
       {/* Desktop rail */}
       <aside className="sticky top-0 hidden h-dvh flex-col border-r border-line bg-surface/60 px-5 py-6 backdrop-blur lg:flex">
-        <Brand />
+        <div className="flex items-start justify-between gap-3">
+          <Brand />
+          <LanguageSwitcher compact />
+        </div>
         <nav className="mt-10 flex flex-1 flex-col gap-1">
           {NAV.map(({ to, labelKey, Icon }) => (
             <NavLink
@@ -70,23 +73,33 @@ export function AppShell({ children }: { children: ReactNode }) {
             </NavLink>
           ))}
         </nav>
-        <div className="mt-6 border-t border-line pt-4">
-          <LanguageSwitcher />
-        </div>
       </aside>
 
       <div className="flex min-w-0 flex-col">
         {/* Mobile header */}
-        <header className="sticky top-0 z-40 flex items-center justify-between border-b border-line bg-bg/85 px-4 py-3 backdrop-blur-xl lg:hidden">
+        {/* pt-[safe-area] keeps the header clear of the Dynamic Island when
+            the PWA runs standalone (no browser chrome to push it down). */}
+        <header className="sticky top-0 z-40 flex items-center justify-between border-b border-line bg-bg/85 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-xl lg:hidden">
           <Brand />
-          <LanguageSwitcher compact />
+          <LanguageSwitcher />
         </header>
 
-        <main className="min-w-0 flex-1 pb-24 lg:pb-10">{children}</main>
+        {/* min-h-dvh is load-bearing on iOS, not cosmetic: on pages shorter
+            than the screen, the rubber-band overscroll in a standalone PWA
+            leaves position:fixed elements (the tab bar) visibly displaced.
+            Guaranteeing no page is shorter than the viewport avoids it. */}
+        <main className="min-h-dvh min-w-0 flex-1 pb-28 lg:min-h-0 lg:pb-10">{children}</main>
 
         {/* Mobile tab bar */}
         <nav
           className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-line bg-bg/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
+          // A fixed bar with backdrop-filter jitters during iOS momentum
+          // scrolling unless it gets its own compositor layer.
+          style={{
+            transform: 'translateZ(0)',
+            willChange: 'transform',
+            backfaceVisibility: 'hidden',
+          }}
           aria-label={t('nav.home')}
         >
           {NAV.map(({ to, labelKey, Icon }) => (
@@ -95,7 +108,8 @@ export function AppShell({ children }: { children: ReactNode }) {
               to={to}
               end={to === '/'}
               className={({ isActive }) =>
-                `flex flex-col items-center gap-1 py-2.5 text-[0.6rem] font-semibold tracking-wide uppercase transition ${
+                // min-h-11 ≈ 44px, Apple's minimum comfortable tap target
+                `flex min-h-11 flex-col items-center justify-center gap-1 py-2.5 text-[0.6rem] font-semibold tracking-wide uppercase transition ${
                   isActive ? 'text-speed' : 'text-ink-faint'
                 }`
               }

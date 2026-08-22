@@ -37,7 +37,10 @@ void i18n
     load: 'languageOnly',
     nonExplicitSupportedLngs: true,
     detection: {
-      order: ['localStorage', 'navigator'],
+      // English is the default on purpose — navigator detection is NOT in the
+      // order, so a Spanish-locale phone still opens in English. Only an
+      // explicit pick from the toggle (stored here) changes it.
+      order: ['localStorage'],
       lookupLocalStorage: 'paddock.lang',
       caches: ['localStorage'],
     },
