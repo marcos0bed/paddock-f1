@@ -183,6 +183,11 @@
     "best": "Mejor",
     "lapsShort": "vueltas",
     "restrictedTitle": "Los resultados están bloqueados ahora mismo",
-    "restrictedBody": "El plan gratuito de OpenF1 bloquea todas las peticiones desde 30 minutos antes de una sesión hasta 30 minutos después de terminar. Vuelven a aparecer al cerrarse esa ventana."
+    "restrictedBody": "El plan gratuito de OpenF1 bloquea todas las peticiones desde 30 minutos antes de una sesión hasta 30 minutos después de terminar. Vuelven a aparecer al cerrarse esa ventana.",
+    "trackTemp": "Pista",
+    "airTemp": "Aire",
+    "tyreStrategy": "Estrategia de neumáticos",
+    "pitCount_one": "{{count}} parada",
+    "pitCount_other": "{{count}} paradas"
   }
 }

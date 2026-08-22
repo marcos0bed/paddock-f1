@@ -83,6 +83,11 @@ export function DriverStandingsTable({ standings }: { standings: DriverStanding[
                       <span className="text-ink-dim">{s.Driver.givenName} </span>
                       {s.Driver.familyName}
                     </span>
+                    {i === 0 && (
+                      <span className="text-sm leading-none" aria-hidden>
+                        👑
+                      </span>
+                    )}
                     {s.Driver.code && (
                       <span
                         data-timing

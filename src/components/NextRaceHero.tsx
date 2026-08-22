@@ -70,7 +70,10 @@ export function NextRaceHero({ race, totalRounds }: { race: Race; totalRounds: n
 
       <div className="relative p-5 sm:p-8">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <span className="eyebrow text-speed">{t('home.nextRace')}</span>
+          <span className="eyebrow flex items-center gap-1.5 text-speed">
+            <span aria-hidden>🏎️</span>
+            {t('home.nextRace')}
+          </span>
           <span className="h-3 w-px bg-line-bright" />
           <span className="eyebrow">
             {t('common.roundOf', { round: race.round, total: totalRounds })}

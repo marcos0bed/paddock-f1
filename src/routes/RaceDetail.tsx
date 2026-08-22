@@ -93,12 +93,8 @@ function ResultsTable({ results }: { results: RaceResult[] }) {
                     {r.Time?.time ?? r.status}
                   </span>
                   {r.FastestLap?.rank === '1' && (
-                    <span
-                      className="ml-1.5 text-[0.6rem] font-700"
-                      style={{ color: 'var(--color-best-session)' }}
-                      title={t('race.fastestLap')}
-                    >
-                      ⏱
+                    <span className="ml-1.5 text-xs" title={t('race.fastestLap')} aria-hidden>
+                      ⚡
                     </span>
                   )}
                 </td>

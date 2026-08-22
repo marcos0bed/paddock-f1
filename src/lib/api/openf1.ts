@@ -3,11 +3,13 @@ import type {
   OpenF1Interval,
   OpenF1Lap,
   OpenF1Meeting,
+  OpenF1Pit,
   OpenF1Position,
   OpenF1RaceControl,
   OpenF1Session,
   OpenF1SessionResult,
   OpenF1Stint,
+  OpenF1Weather,
 } from './types'
 
 const BASE = 'https://api.openf1.org/v1'
@@ -154,6 +156,14 @@ export async function getStints(sessionKey: number | 'latest') {
 
 export async function getRaceControl(sessionKey: number | 'latest') {
   return get<OpenF1RaceControl>('race_control', { session_key: sessionKey })
+}
+
+export async function getPitStops(sessionKey: number) {
+  return get<OpenF1Pit>('pit', { session_key: sessionKey })
+}
+
+export async function getWeather(sessionKey: number) {
+  return get<OpenF1Weather>('weather', { session_key: sessionKey })
 }
 
 /**

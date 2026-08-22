@@ -19,6 +19,7 @@ import { teamColor } from '../lib/teams'
 /** Compact "who's leading" tile, one for each championship. */
 function LeaderCard({
   eyebrow,
+  icon,
   name,
   sub,
   points,
@@ -27,6 +28,7 @@ function LeaderCard({
   flag,
 }: {
   eyebrow: string
+  icon: string
   name: string
   sub?: string
   points: string
@@ -40,7 +42,10 @@ function LeaderCard({
       className="panel team-edge group flex flex-col justify-between gap-4 p-4 transition hover:bg-surface-2"
       style={{ ['--team' as string]: color }}
     >
-      <p className="eyebrow">{eyebrow}</p>
+      <p className="eyebrow flex items-center gap-1.5">
+        <span aria-hidden>{icon}</span>
+        {eyebrow}
+      </p>
       <div>
         <p className="flex items-center gap-2 font-display text-2xl leading-tight font-700 text-ink uppercase">
           {flag && (
@@ -74,7 +79,10 @@ function LastRaceCard({ season, round }: { season: string; round: string }) {
     <section className="panel">
       <div className="flex items-center justify-between border-b border-line px-4 py-3">
         <div>
-          <p className="eyebrow">{t('home.lastRace')}</p>
+          <p className="eyebrow flex items-center gap-1.5">
+            <span aria-hidden>🏁</span>
+            {t('home.lastRace')}
+          </p>
           <h2 className="mt-0.5 font-display text-xl font-600 text-ink uppercase">
             {raceName(data.raceName)}
           </h2>
@@ -110,8 +118,13 @@ function LastRaceCard({ season, round }: { season: string; round: string }) {
                   {flagEmoji(iso)}
                 </span>
               )}
-              <span className="min-w-0 flex-1 truncate text-sm font-semibold text-ink">
+              <span className="flex min-w-0 flex-1 items-center gap-1.5 truncate text-sm font-semibold text-ink">
                 {r.Driver.familyName}
+                {i === 0 && (
+                  <span className="text-xs" aria-hidden>
+                    🏆
+                  </span>
+                )}
               </span>
               <span className="hidden truncate text-xs text-ink-faint sm:block">
                 {r.Constructor.name}
@@ -179,6 +192,7 @@ export function Home() {
           {topDriver && (
             <LeaderCard
               eyebrow={t('home.championshipLeader')}
+              icon="👑"
               name={`${topDriver.Driver.givenName} ${topDriver.Driver.familyName}`}
               sub={topDriver.Constructors[0]?.name}
               points={`${formatPoints(topDriver.points, locale)} ${t('common.points')}`}
@@ -190,6 +204,7 @@ export function Home() {
           {topTeam && (
             <LeaderCard
               eyebrow={t('home.constructorLeader')}
+              icon="🔧"
               name={topTeam.Constructor.name}
               points={`${formatPoints(topTeam.points, locale)} ${t('common.points')}`}
               color={teamColor(topTeam.Constructor.constructorId)}

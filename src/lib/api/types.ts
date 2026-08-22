@@ -236,6 +236,27 @@ export interface OpenF1SessionResult {
 /** A time or gap: scalar, per-segment array, or free text like "+1 LAP". */
 export type OpenF1Measure = number | string | (number | string | null)[] | null
 
+export interface OpenF1Pit {
+  date: string
+  session_key: number
+  meeting_key: number
+  driver_number: number
+  pit_duration: number | null
+  lap_number: number
+}
+
+export interface OpenF1Weather {
+  date: string
+  session_key: number
+  air_temperature: number
+  track_temperature: number
+  humidity: number
+  rainfall: number
+  wind_speed: number
+  wind_direction: number
+  pressure: number
+}
+
 export interface OpenF1RaceControl {
   date: string
   category: string

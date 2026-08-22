@@ -183,6 +183,11 @@
     "best": "Best",
     "lapsShort": "laps",
     "restrictedTitle": "Weekend results are locked right now",
-    "restrictedBody": "OpenF1's free tier blocks every request from 30 minutes before a session until 30 minutes after it ends. Results reappear once that window closes."
+    "restrictedBody": "OpenF1's free tier blocks every request from 30 minutes before a session until 30 minutes after it ends. Results reappear once that window closes.",
+    "trackTemp": "Track",
+    "airTemp": "Air",
+    "tyreStrategy": "Tyre strategy",
+    "pitCount_one": "{{count}} pit",
+    "pitCount_other": "{{count}} pits"
   }
 }

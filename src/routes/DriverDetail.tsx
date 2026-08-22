@@ -10,15 +10,30 @@ import { flagEmoji, localizedNationality, nationalityIso } from '../lib/countrie
 import { formatDate, formatPoints, isClassified, raceDate } from '../lib/format'
 import { teamColor } from '../lib/teams'
 
-function Stat({ label, value, accent }: { label: string; value: string; accent?: string }) {
+function Stat({
+  label,
+  value,
+  accent,
+  icon,
+}: {
+  label: string
+  value: string
+  accent?: string
+  icon?: string
+}) {
   return (
     <div className="panel px-4 py-3">
       <p className="eyebrow mb-1">{label}</p>
       <p
         data-timing
-        className="font-mono text-2xl font-700 text-ink"
+        className="flex items-center gap-1.5 font-mono text-2xl font-700 text-ink"
         style={accent ? { color: accent } : undefined}
       >
+        {icon && (
+          <span className="text-lg" aria-hidden>
+            {icon}
+          </span>
+        )}
         {value}
       </p>
     </div>
@@ -198,6 +213,7 @@ export function DriverDetail() {
             label={t('driver.championships')}
             value={String(titles)}
             accent={titles > 0 ? 'var(--color-best-session)' : undefined}
+            icon={titles > 0 ? '🏆' : undefined}
           />
           <Stat label={t('driver.careerWins')} value={String(careerWins)} />
           <Stat label={t('standings.pts')} value={formatPoints(careerPoints, locale)} />

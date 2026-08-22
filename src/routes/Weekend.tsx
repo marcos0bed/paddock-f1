@@ -13,8 +13,10 @@ import {
   useWeekend,
   type SessionState,
 } from '../hooks/useWeekend'
+import { useSessionExtras, type DriverStrategy } from '../hooks/useSessionExtras'
 import { countryIso, flagEmoji, localizedCountry } from '../lib/countries'
 import { formatLapTime, formatTime } from '../lib/format'
+import { tyreColor } from '../lib/teams'
 import type {
   OpenF1DriverInfo,
   OpenF1Measure,
@@ -168,6 +170,108 @@ function ResultRows({
   )
 }
 
+function WeatherLine({
+  trackTemp,
+  airTemp,
+  humidity,
+  rain,
+}: {
+  trackTemp: number
+  airTemp: number
+  humidity: number
+  rain: boolean
+}) {
+  const { t } = useTranslation()
+  return (
+    <p className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-line px-4 py-2.5 text-xs text-ink-faint">
+      <span>
+        {rain ? '🌧️' : '☀️'} {t('weekend.trackTemp')} {trackTemp.toFixed(0)}°C
+      </span>
+      <span>🌡️ {t('weekend.airTemp')} {airTemp.toFixed(0)}°C</span>
+      <span>💧 {humidity.toFixed(0)}%</span>
+    </p>
+  )
+}
+
+function FastestLapBadge({
+  driverLabel,
+  duration,
+  lapNumber,
+}: {
+  driverLabel: string
+  duration: number
+  lapNumber: number
+}) {
+  const { t } = useTranslation()
+  return (
+    <div className="flex items-center gap-2.5 border-t border-line bg-best-session/5 px-4 py-2.5">
+      <span className="text-base leading-none" aria-hidden>
+        ⚡
+      </span>
+      <span className="text-[0.65rem] font-700 tracking-widest text-best-session uppercase">
+        {t('race.fastestLap')}
+      </span>
+      <span className="ml-auto flex items-baseline gap-2">
+        <span className="text-sm font-semibold text-ink">{driverLabel}</span>
+        <span data-timing className="font-mono text-sm font-700 text-best-session">
+          {formatLapTime(duration)}
+        </span>
+        <span data-timing className="font-mono text-[0.65rem] text-ink-faint">
+          L{lapNumber}
+        </span>
+      </span>
+    </div>
+  )
+}
+
+/** One driver's tyre stints as a proportional segmented bar, plus pit count. */
+function StrategyRow({
+  strategy,
+  driver,
+}: {
+  strategy: DriverStrategy
+  driver: OpenF1DriverInfo | undefined
+}) {
+  const { t } = useTranslation()
+  const totalLaps = strategy.stints.reduce(
+    (sum, s) => sum + (s.lap_end - s.lap_start + 1),
+    0,
+  )
+  if (totalLaps === 0) return null
+
+  return (
+    <li className="flex items-center gap-2 px-4 py-2">
+      <span className="w-9 shrink-0 truncate text-xs font-semibold text-ink">
+        {driver?.name_acronym ?? `#${strategy.driverNumber}`}
+      </span>
+      <span className="flex h-3 flex-1 gap-px overflow-hidden rounded-sm bg-surface-3">
+        {strategy.stints.map((s, i) => {
+          const laps = s.lap_end - s.lap_start + 1
+          return (
+            <span
+              key={i}
+              title={`${s.compound} · L${s.lap_start}-${s.lap_end}`}
+              className="h-full"
+              style={{
+                width: `${(laps / totalLaps) * 100}%`,
+                background: tyreColor(s.compound),
+              }}
+            />
+          )
+        })}
+      </span>
+      <span
+        data-timing
+        className="w-14 shrink-0 text-right font-mono text-[0.65rem] text-ink-faint"
+      >
+        {strategy.pitCount > 0
+          ? t('weekend.pitCount', { count: strategy.pitCount })
+          : '—'}
+      </span>
+    </li>
+  )
+}
+
 function SessionCard({
   session,
   drivers,
@@ -186,6 +290,13 @@ function SessionCard({
   const hasResults = state === 'done'
 
   const { data, isLoading, error } = useSessionResult(session.session_key, open && hasResults)
+  const extras = useSessionExtras(session.session_key, open && hasResults)
+
+  const strategyRows = [...extras.strategyByDriver.values()].sort((a, b) => {
+    const posA = data?.find((r) => r.driver_number === a.driverNumber)?.position ?? 99
+    const posB = data?.find((r) => r.driver_number === b.driverNumber)?.position ?? 99
+    return posA - posB
+  })
 
   return (
     <section className="panel">
@@ -238,6 +349,27 @@ function SessionCard({
           >
             {isLoading && <LoadingRows rows={5} />}
             {error ? <ErrorState error={error} /> : null}
+
+            {extras.weather && (
+              <WeatherLine
+                trackTemp={extras.weather.trackTemp}
+                airTemp={extras.weather.airTemp}
+                humidity={extras.weather.humidity}
+                rain={extras.weather.rain}
+              />
+            )}
+
+            {extras.fastestLap && (
+              <FastestLapBadge
+                driverLabel={
+                  drivers.get(extras.fastestLap.driverNumber)?.name_acronym ??
+                  `#${extras.fastestLap.driverNumber}`
+                }
+                duration={extras.fastestLap.duration}
+                lapNumber={extras.fastestLap.lapNumber}
+              />
+            )}
+
             {data && data.length > 0 && (
               <ResultRows results={data} drivers={drivers} shape={shape} />
             )}
@@ -245,6 +377,21 @@ function SessionCard({
               <p className="border-t border-line px-4 py-6 text-center text-sm text-ink-faint">
                 {t('weekend.noResults')}
               </p>
+            )}
+
+            {strategyRows.length > 0 && (
+              <div className="border-t border-line">
+                <p className="eyebrow px-4 py-2.5">{t('weekend.tyreStrategy')}</p>
+                <ul className="divide-y divide-line/50">
+                  {strategyRows.map((s) => (
+                    <StrategyRow
+                      key={s.driverNumber}
+                      strategy={s}
+                      driver={drivers.get(s.driverNumber)}
+                    />
+                  ))}
+                </ul>
+              </div>
             )}
           </motion.div>
         )}

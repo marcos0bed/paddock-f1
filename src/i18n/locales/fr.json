@@ -183,6 +183,11 @@
     "best": "Meilleur",
     "lapsShort": "tours",
     "restrictedTitle": "Résultats bloqués pour le moment",
-    "restrictedBody": "L'offre gratuite d'OpenF1 bloque toutes les requêtes de 30 minutes avant une séance jusqu'à 30 minutes après sa fin. Les résultats réapparaissent une fois cette fenêtre passée."
+    "restrictedBody": "L'offre gratuite d'OpenF1 bloque toutes les requêtes de 30 minutes avant une séance jusqu'à 30 minutes après sa fin. Les résultats réapparaissent une fois cette fenêtre passée.",
+    "trackTemp": "Piste",
+    "airTemp": "Air",
+    "tyreStrategy": "Stratégie pneus",
+    "pitCount_one": "{{count}} arrêt",
+    "pitCount_other": "{{count}} arrêts"
   }
 }

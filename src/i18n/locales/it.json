@@ -183,6 +183,11 @@
     "best": "Migliore",
     "lapsShort": "giri",
     "restrictedTitle": "Risultati bloccati in questo momento",
-    "restrictedBody": "Il piano gratuito di OpenF1 blocca tutte le richieste da 30 minuti prima di una sessione fino a 30 minuti dopo la fine. Tornano disponibili una volta chiusa quella finestra."
+    "restrictedBody": "Il piano gratuito di OpenF1 blocca tutte le richieste da 30 minuti prima di una sessione fino a 30 minuti dopo la fine. Tornano disponibili una volta chiusa quella finestra.",
+    "trackTemp": "Pista",
+    "airTemp": "Aria",
+    "tyreStrategy": "Strategia gomme",
+    "pitCount_one": "{{count}} sosta",
+    "pitCount_other": "{{count}} soste"
   }
 }

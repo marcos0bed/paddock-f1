@@ -20,11 +20,50 @@ export class JolpicaError extends Error {
   }
 }
 
+/**
+ * Jolpica's documented free-tier limit is 4 requests/second burst, 500/hour
+ * sustained (github.com/jolpica/jolpica-f1/blob/main/docs/rate_limits.md).
+ * Most screens fire one or two calls, well under that — but a driver or
+ * constructor career view fans out to one request per season (up to 20+ for
+ * long-running teams), and Ergast's old bulk "whole career in one call"
+ * endpoint no longer exists. Funnelling every request through one queue means
+ * callers can fire them all with Promise.all without thinking about pacing;
+ * this serialises the actual network calls at a safe ~3.7/s regardless.
+ */
+const MIN_GAP_MS = 270
+let chain: Promise<unknown> = Promise.resolve()
+
+function throttle<T>(task: () => Promise<T>): Promise<T> {
+  const run = chain.then(task, task)
+  chain = run.then(
+    () => new Promise((r) => setTimeout(r, MIN_GAP_MS)),
+    () => new Promise((r) => setTimeout(r, MIN_GAP_MS)),
+  )
+  return run
+}
+
+/**
+ * A career view fans out to one request per season, all funnelled through the
+ * same throttle queue. If any single one of them still lands on a 429 —
+ * shared-IP contention, an imprecise sliding window, whatever — retrying just
+ * that request is far cheaper than the alternative: React Query's default
+ * retry re-runs the *whole* queryFn, which for a 20+ season career means
+ * re-issuing every request in the batch to recover from one failure.
+ */
+async function fetchWithRetry(url: URL, attempt = 0): Promise<Response> {
+  const res = await fetch(url, { headers: { Accept: 'application/json' } })
+  if (res.status === 429 && attempt < 4) {
+    await new Promise((r) => setTimeout(r, 500 * (attempt + 1)))
+    return fetchWithRetry(url, attempt + 1)
+  }
+  return res
+}
+
 async function get<T>(path: string, params: Record<string, string | number> = {}): Promise<T> {
   const url = new URL(`${BASE}/${path}.json`)
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, String(v))
 
-  const res = await fetch(url, { headers: { Accept: 'application/json' } })
+  const res = await throttle(() => fetchWithRetry(url))
   if (!res.ok) {
     throw new JolpicaError(
       res.status === 429
@@ -120,17 +159,42 @@ export async function getDriverSeasonResults(driverId: string, season: string | 
   return d.MRData.RaceTable.Races
 }
 
-/** Career championship placings for a driver, oldest first. */
+/**
+ * Career championship placings for a driver, oldest first.
+ *
+ * `drivers/{id}/driverstandings` without a season used to return the whole
+ * career in one call; Jolpica now rejects it with "Missing required parameter
+ * season_year". There's no bulk replacement, so this fetches the driver's
+ * season list first (cheap, one call) and then every season's standings in
+ * parallel — more requests, but each is small and the result is cached
+ * indefinitely once fetched.
+ */
 export async function getDriverStandingsHistory(driverId: string) {
-  const d = await get<StandingsResponse>(`drivers/${driverId}/driverstandings`, { limit: 100 })
-  return d.MRData.StandingsTable.StandingsLists
+  const seasons = await get<SeasonTableResponse>(`drivers/${driverId}/seasons`, { limit: 100 })
+  const years = seasons.MRData.SeasonTable.Seasons.map((s) => s.season)
+  const perSeason = await Promise.all(
+    years.map((year) =>
+      get<StandingsResponse>(`${year}/drivers/${driverId}/driverstandings`, { limit: 1 }).then(
+        (d) => d.MRData.StandingsTable.StandingsLists[0],
+      ),
+    ),
+  )
+  return perSeason.filter((l): l is StandingsList => Boolean(l))
 }
 
 export async function getConstructorStandingsHistory(constructorId: string) {
-  const d = await get<StandingsResponse>(`constructors/${constructorId}/constructorstandings`, {
+  const seasons = await get<SeasonTableResponse>(`constructors/${constructorId}/seasons`, {
     limit: 100,
   })
-  return d.MRData.StandingsTable.StandingsLists
+  const years = seasons.MRData.SeasonTable.Seasons.map((s) => s.season)
+  const perSeason = await Promise.all(
+    years.map((year) =>
+      get<StandingsResponse>(`${year}/constructors/${constructorId}/constructorstandings`, {
+        limit: 1,
+      }).then((d) => d.MRData.StandingsTable.StandingsLists[0]),
+    ),
+  )
+  return perSeason.filter((l): l is StandingsList => Boolean(l))
 }
 
 export async function getDriverWins(driverId: string) {

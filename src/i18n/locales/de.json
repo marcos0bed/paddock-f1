@@ -183,6 +183,11 @@
     "best": "Beste",
     "lapsShort": "Runden",
     "restrictedTitle": "Ergebnisse sind gerade gesperrt",
-    "restrictedBody": "Der kostenlose OpenF1-Tarif blockiert alle Anfragen von 30 Minuten vor einer Session bis 30 Minuten nach ihrem Ende. Danach sind sie wieder verfügbar."
+    "restrictedBody": "Der kostenlose OpenF1-Tarif blockiert alle Anfragen von 30 Minuten vor einer Session bis 30 Minuten nach ihrem Ende. Danach sind sie wieder verfügbar.",
+    "trackTemp": "Strecke",
+    "airTemp": "Luft",
+    "tyreStrategy": "Reifenstrategie",
+    "pitCount_one": "{{count}} Stopp",
+    "pitCount_other": "{{count}} Stopps"
   }
 }

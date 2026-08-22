@@ -86,9 +86,14 @@ export function TeamDetail() {
             <p className="eyebrow mb-1">{t('team.championships')}</p>
             <p
               data-timing
-              className="font-mono text-2xl font-700"
+              className="flex items-center gap-1.5 font-mono text-2xl font-700"
               style={{ color: titles > 0 ? 'var(--color-best-session)' : 'var(--color-ink)' }}
             >
+              {titles > 0 && (
+                <span className="text-lg" aria-hidden>
+                  🏆
+                </span>
+              )}
               {titles}
             </p>
           </div>
