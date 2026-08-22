@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 
+import * as jolpica from '../lib/api/jolpica'
 import * as openf1 from '../lib/api/openf1'
 import { OpenF1RestrictedError } from '../lib/api/openf1'
+import { isLikelyOpenF1RestrictedNow } from '../lib/weekendWindow'
 import type { OpenF1Session } from '../lib/api/types'
 
 export type SessionState = 'done' | 'live' | 'upcoming'
@@ -54,9 +56,27 @@ export function useWeekend() {
     retry: noRetryWhenRestricted,
   })
 
-  const restricted = [meeting.error, sessions.error, drivers.error].some(
+  // Jolpica's schedule as a CORS-safe cross-check. OpenF1's block response has
+  // been seen coming back without an Access-Control-Allow-Origin header,
+  // which the browser refuses to expose to JS — fetch() just rejects with an
+  // opaque error that looks identical to "no internet." Independently timing
+  // the race weekend from Jolpica lets the errored state below distinguish
+  // "OpenF1 is deliberately blocking" from an actual connection problem.
+  const schedule = useQuery({
+    queryKey: ['weekend', 'jolpica-schedule'],
+    queryFn: () => jolpica.getSchedule('current'),
+    staleTime: 30 * 60 * 1000,
+    gcTime: 6 * 60 * 60 * 1000,
+  })
+
+  const hasError = [meeting.error, sessions.error, drivers.error].some(Boolean)
+  const isCleanlyRestricted = [meeting.error, sessions.error, drivers.error].some(
     (e) => e instanceof OpenF1RestrictedError,
   )
+  const isLikelyRestricted =
+    hasError &&
+    (schedule.data ?? []).some((race) => isLikelyOpenF1RestrictedNow(race))
+  const restricted = isCleanlyRestricted || isLikelyRestricted
 
   return {
     meeting: meeting.data ?? null,
