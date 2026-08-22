@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
+import { BuildChip } from './BuildChip'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { IconArchive, IconCalendar, IconHome, IconLive, IconTrophy } from './icons'
 
@@ -81,7 +82,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             the PWA runs standalone (no browser chrome to push it down). */}
         <header className="sticky top-0 z-40 flex items-center justify-between border-b border-line bg-bg/85 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-xl lg:hidden">
           <Brand />
-          <LanguageSwitcher />
+          <div className="flex items-center gap-3">
+            <BuildChip />
+            <LanguageSwitcher />
+          </div>
         </header>
 
         {/* min-h-dvh is load-bearing on iOS, not cosmetic: on pages shorter

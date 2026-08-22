@@ -3,7 +3,17 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
+/* A visible build marker. With a service worker in play — especially in an
+   installed iOS PWA, which can keep serving a cached build across launches —
+   "is the fix even on my phone yet?" is otherwise unanswerable. */
+const BUILD_ID =
+  process.env.GITHUB_SHA?.slice(0, 7) ??
+  new Date().toISOString().slice(5, 16).replace('T', ' ').replace('-', '/')
+
 export default defineConfig({
+  define: {
+    __BUILD_ID__: JSON.stringify(BUILD_ID),
+  },
   plugins: [
     react(),
     tailwindcss(),
