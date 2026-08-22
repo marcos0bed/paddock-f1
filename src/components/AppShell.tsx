@@ -91,15 +91,13 @@ export function AppShell({ children }: { children: ReactNode }) {
         <main className="min-h-dvh min-w-0 flex-1 pb-28 lg:min-h-0 lg:pb-10">{children}</main>
 
         {/* Mobile tab bar */}
+        {/* Deliberately plain: opaque background, no backdrop-filter and no
+            compositing hints. On iOS, a fixed bar that is promoted to its own
+            layer (will-change/translateZ) and/or runs a backdrop-filter can end
+            up with its touch region offset from where it is painted — the taps
+            land nowhere. A bottom nav has to be reliable before it is pretty. */}
         <nav
-          className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-line bg-bg/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
-          // A fixed bar with backdrop-filter jitters during iOS momentum
-          // scrolling unless it gets its own compositor layer.
-          style={{
-            transform: 'translateZ(0)',
-            willChange: 'transform',
-            backfaceVisibility: 'hidden',
-          }}
+          className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-line bg-bg pb-[env(safe-area-inset-bottom)] lg:hidden"
           aria-label={t('nav.home')}
         >
           {NAV.map(({ to, labelKey, Icon }) => (

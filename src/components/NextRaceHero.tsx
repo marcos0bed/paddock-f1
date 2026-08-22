@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { motion } from 'motion/react'
 
 import { useCountdown, useLocale } from '../hooks/useF1'
+import { useRaceName } from '../hooks/useRaceName'
 import { countryIso, flagEmoji, localizedCountry } from '../lib/countries'
 import { formatDateLong, formatTime, raceDate } from '../lib/format'
 import type { Race, SessionSlot } from '../lib/api/types'
@@ -46,6 +47,7 @@ function CountdownCell({ value, label }: { value: number; label: string }) {
 export function NextRaceHero({ race, totalRounds }: { race: Race; totalRounds: number }) {
   const { t } = useTranslation()
   const locale = useLocale()
+  const raceName = useRaceName()
   const start = raceDate(race.date, race.time)
   const countdown = useCountdown(start)
   const iso = countryIso(race.Circuit.Location.country)
@@ -76,7 +78,7 @@ export function NextRaceHero({ race, totalRounds }: { race: Race; totalRounds: n
         </div>
 
         <h1 className="mt-3 font-display text-4xl leading-[0.95] font-700 tracking-tight text-ink uppercase sm:text-6xl lg:text-7xl">
-          {race.raceName}
+          {raceName(race.raceName)}
         </h1>
 
         <p className="mt-3 flex flex-wrap items-center gap-2 text-sm text-ink-dim">

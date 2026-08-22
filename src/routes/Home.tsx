@@ -11,6 +11,7 @@ import {
   useRaceResults,
   useSeasonState,
 } from '../hooks/useF1'
+import { useRaceName } from '../hooks/useRaceName'
 import { flagEmoji, nationalityIso } from '../lib/countries'
 import { formatDate, formatPoints, raceDate } from '../lib/format'
 import { teamColor } from '../lib/teams'
@@ -61,6 +62,7 @@ function LeaderCard({
 function LastRaceCard({ season, round }: { season: string; round: string }) {
   const { t } = useTranslation()
   const locale = useLocale()
+  const raceName = useRaceName()
   const { data, isLoading } = useRaceResults(season, round)
 
   if (isLoading) return <LoadingRows rows={3} />
@@ -74,7 +76,7 @@ function LastRaceCard({ season, round }: { season: string; round: string }) {
         <div>
           <p className="eyebrow">{t('home.lastRace')}</p>
           <h2 className="mt-0.5 font-display text-xl font-600 text-ink uppercase">
-            {data.raceName}
+            {raceName(data.raceName)}
           </h2>
         </div>
         <span className="text-xs text-ink-faint">

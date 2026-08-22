@@ -13,6 +13,7 @@ import {
   useLocale,
   useSchedule,
 } from '../hooks/useF1'
+import { useRaceName } from '../hooks/useRaceName'
 import { countryIso, flagEmoji, nationalityIso } from '../lib/countries'
 import { formatDate, formatPoints, raceDate } from '../lib/format'
 import { teamColor } from '../lib/teams'
@@ -68,6 +69,7 @@ function ChampionBanner({
 export function SeasonDetail() {
   const { t } = useTranslation()
   const locale = useLocale()
+  const raceName = useRaceName()
   const { season = '' } = useParams()
 
   const schedule = useSchedule(season)
@@ -138,7 +140,7 @@ export function SeasonDetail() {
                       {flagEmoji(iso)}
                     </span>
                     <span className="min-w-0 flex-1 truncate text-sm font-semibold text-ink">
-                      {race.raceName}
+                      {raceName(race.raceName)}
                     </span>
                     <span data-timing className="shrink-0 font-mono text-xs text-ink-faint">
                       {formatDate(raceDate(race.date, race.time), locale, {

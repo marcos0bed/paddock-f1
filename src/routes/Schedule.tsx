@@ -5,12 +5,14 @@ import { motion } from 'motion/react'
 import { Page } from '../components/AppShell'
 import { EmptyState, ErrorState, LoadingRows } from '../components/states'
 import { useLocale, useSeasonState } from '../hooks/useF1'
+import { useRaceName } from '../hooks/useRaceName'
 import { countryIso, flagEmoji, localizedCountry } from '../lib/countries'
 import { formatDate, formatTime, raceDate } from '../lib/format'
 import type { Race } from '../lib/api/types'
 
 function RaceRow({ race, done }: { race: Race; done: boolean }) {
   const locale = useLocale()
+  const raceName = useRaceName()
   const { t } = useTranslation()
   const start = raceDate(race.date, race.time)
   const iso = countryIso(race.Circuit.Location.country)
@@ -37,7 +39,7 @@ function RaceRow({ race, done }: { race: Race; done: boolean }) {
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <span className="truncate font-display text-lg font-600 tracking-wide text-ink uppercase">
-            {race.raceName}
+            {raceName(race.raceName)}
           </span>
           {isSprint && (
             <span className="border border-signal/40 px-1.5 py-0.5 text-[0.6rem] font-700 tracking-widest text-signal uppercase">

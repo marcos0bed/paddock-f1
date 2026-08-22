@@ -5,6 +5,7 @@ import { motion } from 'motion/react'
 import { Page } from '../components/AppShell'
 import { EmptyState, ErrorState, LoadingRows } from '../components/states'
 import { useDriverSeasonResults, useDriverStandingsHistory, useLocale } from '../hooks/useF1'
+import { useRaceName } from '../hooks/useRaceName'
 import { flagEmoji, localizedNationality, nationalityIso } from '../lib/countries'
 import { formatDate, formatPoints, isClassified, raceDate } from '../lib/format'
 import { teamColor } from '../lib/teams'
@@ -85,6 +86,7 @@ function CareerChart({
 export function DriverDetail() {
   const { t } = useTranslation()
   const locale = useLocale()
+  const raceName = useRaceName()
   const { driverId = '' } = useParams()
 
   const history = useDriverStandingsHistory(driverId)
@@ -233,7 +235,7 @@ export function DriverDetail() {
                       {finished ? r.position : '—'}
                     </span>
                     <span className="min-w-0 flex-1 truncate text-sm text-ink">
-                      {race.raceName}
+                      {raceName(race.raceName)}
                     </span>
                     <span data-timing className="shrink-0 font-mono text-xs text-ink-faint">
                       {formatDate(raceDate(race.date, race.time), locale, {

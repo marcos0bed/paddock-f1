@@ -12,6 +12,7 @@ import {
   useRaceResults,
   useSprintResults,
 } from '../hooks/useF1'
+import { useRaceName } from '../hooks/useRaceName'
 import { countryIso, flagEmoji, localizedCountry, nationalityIso } from '../lib/countries'
 import { formatDateLong, isClassified, raceDate } from '../lib/format'
 import { teamColor } from '../lib/teams'
@@ -175,6 +176,7 @@ function QualifyingTable({ results }: { results: QualifyingResult[] }) {
 export function RaceDetail() {
   const { t } = useTranslation()
   const locale = useLocale()
+  const raceName = useRaceName()
   const { season = '', round = '' } = useParams()
   const [tab, setTab] = useState<Tab>('race')
 
@@ -238,7 +240,7 @@ export function RaceDetail() {
           </div>
           <h1 className="mt-2 flex items-center gap-3 font-display text-3xl leading-tight font-700 tracking-tight text-ink uppercase sm:text-5xl">
             <span aria-hidden>{flagEmoji(iso)}</span>
-            {info.raceName}
+            {raceName(info.raceName)}
           </h1>
           <p className="mt-2 text-sm text-ink-dim">
             {info.Circuit.circuitName} · {info.Circuit.Location.locality},{' '}
