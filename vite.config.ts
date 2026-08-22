@@ -44,6 +44,11 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // Drop precaches from previous builds instead of letting them linger
+        // and shadow the current one.
+        cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true,
         runtimeCaching: [
           {
             // Historical data is immutable once a race is over — cache hard.

@@ -1,31 +1,33 @@
-import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 
 import { AppShell, Page } from './components/AppShell'
-import { EmptyState, LoadingRows } from './components/states'
+import { EmptyState } from './components/states'
 import { Home } from './routes/Home'
+import { Schedule } from './routes/Schedule'
+import { Standings } from './routes/Standings'
+import { Seasons } from './routes/Seasons'
+import { SeasonDetail } from './routes/SeasonDetail'
+import { RaceDetail } from './routes/RaceDetail'
+import { DriverDetail } from './routes/DriverDetail'
+import { TeamDetail } from './routes/TeamDetail'
+import { Live } from './routes/Live'
+import { Weekend } from './routes/Weekend'
 
-/* Only the home screen ships in the initial bundle; the rest arrive on demand
-   so first paint on a phone at the circuit stays fast. */
-const Schedule = lazy(() => import('./routes/Schedule').then((m) => ({ default: m.Schedule })))
-const Standings = lazy(() => import('./routes/Standings').then((m) => ({ default: m.Standings })))
-const Seasons = lazy(() => import('./routes/Seasons').then((m) => ({ default: m.Seasons })))
-const SeasonDetail = lazy(() =>
-  import('./routes/SeasonDetail').then((m) => ({ default: m.SeasonDetail })),
-)
-const RaceDetail = lazy(() =>
-  import('./routes/RaceDetail').then((m) => ({ default: m.RaceDetail })),
-)
-const DriverDetail = lazy(() =>
-  import('./routes/DriverDetail').then((m) => ({ default: m.DriverDetail })),
-)
-const TeamDetail = lazy(() =>
-  import('./routes/TeamDetail').then((m) => ({ default: m.TeamDetail })),
-)
-const Live = lazy(() => import('./routes/Live').then((m) => ({ default: m.Live })))
-const Weekend = lazy(() => import('./routes/Weekend').then((m) => ({ default: m.Weekend })))
+/* Every route is imported eagerly, on purpose.
+ *
+ * Route-level code splitting looks like a free win, but it interacts badly
+ * with a service worker on a static host: GitHub Pages only ever serves the
+ * newest build, so once a deploy lands, the previously-hashed chunks are gone.
+ * An installed PWA still running the old cached shell then asks for a chunk
+ * that 404s the moment you tap a tab, the dynamic import rejects, and the app
+ * dies — looking exactly like "the tabs don't work".
+ *
+ * One bundle makes the precache atomic: whatever shell you're running, the
+ * code for every screen is already in it. At ~160 KB gzipped that costs a few
+ * milliseconds on first load and removes a whole class of failure.
+ */
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,14 +49,6 @@ function NotFound() {
   )
 }
 
-function RouteFallback() {
-  return (
-    <Page>
-      <LoadingRows rows={8} />
-    </Page>
-  )
-}
-
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -62,23 +56,21 @@ export default function App() {
           be prefixed. BASE_URL comes from Vite's --base at build time. */}
       <BrowserRouter basename={import.meta.env.BASE_URL}>
         <AppShell>
-          <Suspense fallback={<RouteFallback />}>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/schedule" element={<Schedule />} />
-              <Route path="/schedule/:season" element={<Schedule />} />
-              <Route path="/standings" element={<Standings />} />
-              <Route path="/standings/:season" element={<Standings />} />
-              <Route path="/seasons" element={<Seasons />} />
-              <Route path="/season/:season" element={<SeasonDetail />} />
-              <Route path="/race/:season/:round" element={<RaceDetail />} />
-              <Route path="/driver/:driverId" element={<DriverDetail />} />
-              <Route path="/team/:constructorId" element={<TeamDetail />} />
-              <Route path="/live" element={<Live />} />
-              <Route path="/weekend" element={<Weekend />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/weekend" element={<Weekend />} />
+            <Route path="/schedule" element={<Schedule />} />
+            <Route path="/schedule/:season" element={<Schedule />} />
+            <Route path="/standings" element={<Standings />} />
+            <Route path="/standings/:season" element={<Standings />} />
+            <Route path="/seasons" element={<Seasons />} />
+            <Route path="/season/:season" element={<SeasonDetail />} />
+            <Route path="/race/:season/:round" element={<RaceDetail />} />
+            <Route path="/driver/:driverId" element={<DriverDetail />} />
+            <Route path="/team/:constructorId" element={<TeamDetail />} />
+            <Route path="/live" element={<Live />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </AppShell>
       </BrowserRouter>
     </QueryClientProvider>

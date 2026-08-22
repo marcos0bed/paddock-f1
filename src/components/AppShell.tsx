@@ -21,10 +21,10 @@ const LIVE: NavItem = { to: '/live', labelKey: 'nav.live', Icon: IconLive }
 
 const NAV: NavItem[] = [HOME, WEEKEND, SCHEDULE, STANDINGS, SEASONS, LIVE]
 
-/* Five is the most a phone tab bar can hold legibly at 393px. The season
-   archive is the one thing you're least likely to want mid-race-weekend, so it
-   stays in the desktop rail and is reachable from the schedule screen. */
-const MOBILE_NAV: NavItem[] = [HOME, WEEKEND, SCHEDULE, STANDINGS, LIVE]
+/* Six fits: flex with equal shares, 10px type and 2px side padding — the same
+   recipe the other apps on this phone use. A fixed 5-column grid was my
+   constraint, not the device's. */
+const MOBILE_NAV: NavItem[] = NAV
 
 function Brand() {
   const { t } = useTranslation()
@@ -100,14 +100,18 @@ export function AppShell({ children }: { children: ReactNode }) {
             Guaranteeing no page is shorter than the viewport avoids it. */}
         <main className="min-h-dvh min-w-0 flex-1 pb-28 lg:min-h-0 lg:pb-10">{children}</main>
 
-        {/* Mobile tab bar */}
-        {/* Deliberately plain: opaque background, no backdrop-filter and no
-            compositing hints. On iOS, a fixed bar that is promoted to its own
-            layer (will-change/translateZ) and/or runs a backdrop-filter can end
-            up with its touch region offset from where it is painted — the taps
-            land nowhere. A bottom nav has to be reliable before it is pretty. */}
+        {/* Mobile tab bar.
+            The compositing hints below are proven on this exact phone by the
+            other PWAs installed on it: a fixed bar with backdrop-filter needs
+            its own layer or it jitters during momentum scrolling. They are not
+            what broke tapping — stale code chunks were. */}
         <nav
-          className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-line bg-bg pb-[env(safe-area-inset-bottom)] lg:hidden"
+          className="fixed inset-x-0 bottom-0 z-40 flex border-t border-line bg-bg/92 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden"
+          style={{
+            transform: 'translateZ(0)',
+            willChange: 'transform',
+            backfaceVisibility: 'hidden',
+          }}
           aria-label={t('nav.home')}
         >
           {MOBILE_NAV.map(({ to, labelKey, Icon }) => (
@@ -117,7 +121,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               end={to === '/'}
               className={({ isActive }) =>
                 // min-h-11 ≈ 44px, Apple's minimum comfortable tap target
-                `flex min-h-11 flex-col items-center justify-center gap-1 py-2.5 text-[0.6rem] font-semibold tracking-wide uppercase transition ${
+                `flex min-h-11 min-w-0 flex-1 flex-col items-center justify-center gap-1 overflow-hidden px-[2px] py-2.5 text-[0.6rem] font-semibold tracking-wide whitespace-nowrap uppercase transition ${
                   isActive ? 'text-speed' : 'text-ink-faint'
                 }`
               }
