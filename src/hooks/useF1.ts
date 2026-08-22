@@ -152,19 +152,30 @@ export function useCountdown(target: Date | null): Countdown | null {
     target ? countdownTo(target) : null,
   )
 
+  // Depend on the primitive epoch, not the Date object. Callers that build
+  // `target` inline (`raceDate(race.date, race.time)`, say) hand this effect a
+  // new object every render; keying on object identity made the effect
+  // re-fire on every tick — clear timer, setState synchronously, re-render,
+  // repeat — a runaway loop that pegs the main thread hard enough to make
+  // taps elsewhere on the page stop registering, intermittently, for as long
+  // as the component stays mounted.
+  const epoch = target?.getTime() ?? null
+
   useEffect(() => {
-    if (!target) {
+    if (epoch == null) {
       setValue(null)
       return
     }
-    setValue(countdownTo(target))
+    const t = new Date(epoch)
+    setValue(countdownTo(t))
     const id = setInterval(() => {
-      const next = countdownTo(target)
+      const next = countdownTo(t)
       setValue(next)
       if (next.total <= 0) clearInterval(id)
     }, 1000)
     return () => clearInterval(id)
-  }, [target])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [epoch])
 
   return value
 }
