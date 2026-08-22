@@ -94,6 +94,12 @@ export function useDriverStandingsHistory(driverId: string) {
     queryFn: () => api.getDriverStandingsHistory(driverId),
     enabled: Boolean(driverId),
     ...STATIC,
+    // A career fetch is itself up to ~20 requests, each already retried
+    // individually on 429 inside the client (see jolpica.ts). Letting React
+    // Query's default retry re-run this whole batch on top of that would
+    // multiply, not add, retry attempts — the wrong response to a server
+    // that's already asking everyone to slow down.
+    retry: false,
   })
 }
 
@@ -112,6 +118,7 @@ export function useConstructorStandingsHistory(constructorId: string) {
     queryFn: () => api.getConstructorStandingsHistory(constructorId),
     enabled: Boolean(constructorId),
     ...STATIC,
+    retry: false, // see useDriverStandingsHistory — same reasoning
   })
 }
 
