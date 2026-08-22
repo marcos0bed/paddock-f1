@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
 import { Page } from '../components/AppShell'
+import { LiveryMark } from '../components/EntityDetail'
 import {
   ConstructorStandingsTable,
   DriverStandingsTable,
@@ -42,11 +43,7 @@ function ChampionBanner({
       className="panel team-edge relative flex items-center justify-between gap-4 overflow-hidden p-5 transition hover:bg-surface-2"
       style={{ ['--team' as string]: color }}
     >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-16 -right-10 h-40 w-40 rounded-full opacity-20 blur-3xl"
-        style={{ background: `radial-gradient(circle, ${color}, transparent 70%)` }}
-      />
+      <LiveryMark color={color} compact />
       <div className="relative min-w-0">
         <p className="eyebrow mb-1">{eyebrow}</p>
         <p className="flex items-center gap-2 font-display text-2xl leading-tight font-700 text-ink uppercase sm:text-3xl">
