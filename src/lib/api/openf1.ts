@@ -2,9 +2,11 @@ import type {
   OpenF1DriverInfo,
   OpenF1Interval,
   OpenF1Lap,
+  OpenF1Meeting,
   OpenF1Position,
   OpenF1RaceControl,
   OpenF1Session,
+  OpenF1SessionResult,
   OpenF1Stint,
 } from './types'
 
@@ -37,16 +39,42 @@ export class OpenF1Error extends Error {
   }
 }
 
+/**
+ * The free tier allows 3 requests/second and answers 429 past that. Rather
+ * than retrofitting backoff onto every caller, requests are funnelled through
+ * one queue that spaces them out. Sponsors get double the allowance, so the
+ * gap halves when a key is present.
+ */
+const MIN_GAP_MS = API_KEY ? 170 : 340
+let chain: Promise<unknown> = Promise.resolve()
+
+function throttle<T>(task: () => Promise<T>): Promise<T> {
+  const run = chain.then(task, task)
+  // Advance the chain by the gap regardless of whether `task` resolved or threw,
+  // so one failure can't let the next call through early — or stall the queue.
+  chain = run.then(
+    () => new Promise((r) => setTimeout(r, MIN_GAP_MS)),
+    () => new Promise((r) => setTimeout(r, MIN_GAP_MS)),
+  )
+  return run
+}
+
 async function get<T>(path: string, params: Record<string, string | number> = {}): Promise<T[]> {
   const url = new URL(`${BASE}/${path}`)
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, String(v))
 
-  const res = await fetch(url, {
+  const res = await throttle(() =>
+    fetch(url, {
     headers: {
-      Accept: 'application/json',
-      ...(API_KEY ? { Authorization: `Bearer ${API_KEY}` } : {}),
-    },
-  })
+        Accept: 'application/json',
+        ...(API_KEY ? { Authorization: `Bearer ${API_KEY}` } : {}),
+      },
+    }),
+  )
+
+  if (res.status === 429) {
+    throw new OpenF1Error('Too many requests to the live data service. Try again shortly.', 429)
+  }
 
   const body: unknown = await res.json().catch(() => null)
 
@@ -72,6 +100,33 @@ export async function getLatestSession(): Promise<OpenF1Session | null> {
 
 export async function getSessions(year: number): Promise<OpenF1Session[]> {
   return get<OpenF1Session>('sessions', { year })
+}
+
+/** The race weekend currently in progress, or the most recent one. */
+export async function getLatestMeeting(): Promise<OpenF1Meeting | null> {
+  const m = await get<OpenF1Meeting>('meetings', { meeting_key: 'latest' })
+  return m[0] ?? null
+}
+
+/** Every session of a weekend, in running order. */
+export async function getMeetingSessions(
+  meetingKey: number | 'latest',
+): Promise<OpenF1Session[]> {
+  const s = await get<OpenF1Session>('sessions', { meeting_key: meetingKey })
+  return s.sort((a, b) => (a.date_start < b.date_start ? -1 : 1))
+}
+
+export async function getSessionResult(sessionKey: number) {
+  return get<OpenF1SessionResult>('session_result', { session_key: sessionKey })
+}
+
+/** One driver lookup per weekend rather than per session — the free tier
+    allows only 3 requests/second, so every avoidable call matters. */
+export async function getMeetingDrivers(meetingKey: number) {
+  const all = await get<OpenF1DriverInfo>('drivers', { meeting_key: meetingKey })
+  const byNumber = new Map<number, OpenF1DriverInfo>()
+  for (const d of all) if (!byNumber.has(d.driver_number)) byNumber.set(d.driver_number, d)
+  return [...byNumber.values()]
 }
 
 export async function getSessionDrivers(sessionKey: number | 'latest') {

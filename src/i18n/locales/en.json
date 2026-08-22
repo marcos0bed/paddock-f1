@@ -10,7 +10,8 @@
     "drivers": "Drivers",
     "teams": "Teams",
     "seasons": "Seasons",
-    "live": "Live"
+    "live": "Live",
+    "weekend": "Weekend"
   },
   "common": {
     "loading": "Loading",
@@ -170,5 +171,18 @@
     "teamColour": "Team colour",
     "positionGained": "Gained {{count}} places",
     "positionLost": "Lost {{count}} places"
+  },
+  "weekend": {
+    "title": "Race weekend",
+    "live": "Live",
+    "done": "Done",
+    "upcoming": "Soon",
+    "noResults": "No results for this session",
+    "noWeekend": "No race weekend in progress",
+    "total": "Time",
+    "best": "Best",
+    "lapsShort": "laps",
+    "restrictedTitle": "Weekend results are locked right now",
+    "restrictedBody": "OpenF1's free tier blocks every request from 30 minutes before a session until 30 minutes after it ends. Results reappear once that window closes."
   }
 }

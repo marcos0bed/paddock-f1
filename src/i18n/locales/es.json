@@ -10,7 +10,8 @@
     "drivers": "Pilotos",
     "teams": "Equipos",
     "seasons": "Temporadas",
-    "live": "En directo"
+    "live": "En directo",
+    "weekend": "Finde"
   },
   "common": {
     "loading": "Cargando",
@@ -170,5 +171,18 @@
     "teamColour": "Color del equipo",
     "positionGained": "Ha ganado {{count}} posiciones",
     "positionLost": "Ha perdido {{count}} posiciones"
+  },
+  "weekend": {
+    "title": "Fin de semana",
+    "live": "En vivo",
+    "done": "Fin",
+    "upcoming": "Pronto",
+    "noResults": "Sin resultados de esta sesión",
+    "noWeekend": "No hay ningún GP en curso",
+    "total": "Tiempo",
+    "best": "Mejor",
+    "lapsShort": "vueltas",
+    "restrictedTitle": "Los resultados están bloqueados ahora mismo",
+    "restrictedBody": "El plan gratuito de OpenF1 bloquea todas las peticiones desde 30 minutos antes de una sesión hasta 30 minutos después de terminar. Vuelven a aparecer al cerrarse esa ventana."
   }
 }

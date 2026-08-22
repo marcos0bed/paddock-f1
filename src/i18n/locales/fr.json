@@ -10,7 +10,8 @@
     "drivers": "Pilotes",
     "teams": "Écuries",
     "seasons": "Saisons",
-    "live": "En direct"
+    "live": "En direct",
+    "weekend": "Week-end"
   },
   "common": {
     "loading": "Chargement",
@@ -170,5 +171,18 @@
     "teamColour": "Couleur de l'écurie",
     "positionGained": "{{count}} places gagnées",
     "positionLost": "{{count}} places perdues"
+  },
+  "weekend": {
+    "title": "Week-end de course",
+    "live": "En direct",
+    "done": "Fini",
+    "upcoming": "Bientôt",
+    "noResults": "Aucun résultat pour cette séance",
+    "noWeekend": "Aucun week-end de course en cours",
+    "total": "Temps",
+    "best": "Meilleur",
+    "lapsShort": "tours",
+    "restrictedTitle": "Résultats bloqués pour le moment",
+    "restrictedBody": "L'offre gratuite d'OpenF1 bloque toutes les requêtes de 30 minutes avant une séance jusqu'à 30 minutes après sa fin. Les résultats réapparaissent une fois cette fenêtre passée."
   }
 }

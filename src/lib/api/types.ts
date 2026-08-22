@@ -200,6 +200,42 @@ export interface OpenF1Stint {
   stint_number: number
 }
 
+export interface OpenF1Meeting {
+  meeting_key: number
+  meeting_name: string
+  meeting_official_name: string
+  circuit_short_name: string
+  country_name: string
+  location: string
+  date_start: string
+  year: number
+}
+
+/**
+ * Final classification for one session. The shape of `duration` and
+ * `gap_to_leader` depends on the session type, which is the whole reason this
+ * needs care:
+ *   Practice        → number  (best lap, seconds)
+ *   Qualifying      → number[] ([Q1, Q2, Q3], seconds; nulls for segments not run)
+ *   Race / Sprint   → number  (total race time, seconds)
+ */
+export interface OpenF1SessionResult {
+  position: number | null
+  driver_number: number
+  number_of_laps: number | null
+  dnf: boolean
+  dns: boolean
+  dsq: boolean
+  duration: OpenF1Measure
+  /** Lapped cars come back as text ("+1 LAP"), not a number — never assume. */
+  gap_to_leader: OpenF1Measure
+  meeting_key: number
+  session_key: number
+}
+
+/** A time or gap: scalar, per-segment array, or free text like "+1 LAP". */
+export type OpenF1Measure = number | string | (number | string | null)[] | null
+
 export interface OpenF1RaceControl {
   date: string
   category: string

@@ -25,6 +25,7 @@ const TeamDetail = lazy(() =>
   import('./routes/TeamDetail').then((m) => ({ default: m.TeamDetail })),
 )
 const Live = lazy(() => import('./routes/Live').then((m) => ({ default: m.Live })))
+const Weekend = lazy(() => import('./routes/Weekend').then((m) => ({ default: m.Weekend })))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -74,6 +75,7 @@ export default function App() {
               <Route path="/driver/:driverId" element={<DriverDetail />} />
               <Route path="/team/:constructorId" element={<TeamDetail />} />
               <Route path="/live" element={<Live />} />
+              <Route path="/weekend" element={<Weekend />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>

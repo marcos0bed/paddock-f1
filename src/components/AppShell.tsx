@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import { BuildChip } from './BuildChip'
 import { LanguageSwitcher } from './LanguageSwitcher'
-import { IconArchive, IconCalendar, IconHome, IconLive, IconTrophy } from './icons'
+import { IconArchive, IconCalendar, IconFlag, IconHome, IconLive, IconTrophy } from './icons'
 
 interface NavItem {
   to: string
@@ -12,13 +12,19 @@ interface NavItem {
   Icon: (p: { className?: string }) => ReactNode
 }
 
-const NAV: NavItem[] = [
-  { to: '/', labelKey: 'nav.home', Icon: IconHome },
-  { to: '/schedule', labelKey: 'nav.schedule', Icon: IconCalendar },
-  { to: '/standings', labelKey: 'nav.standings', Icon: IconTrophy },
-  { to: '/seasons', labelKey: 'nav.seasons', Icon: IconArchive },
-  { to: '/live', labelKey: 'nav.live', Icon: IconLive },
-]
+const HOME: NavItem = { to: '/', labelKey: 'nav.home', Icon: IconHome }
+const WEEKEND: NavItem = { to: '/weekend', labelKey: 'nav.weekend', Icon: IconFlag }
+const SCHEDULE: NavItem = { to: '/schedule', labelKey: 'nav.schedule', Icon: IconCalendar }
+const STANDINGS: NavItem = { to: '/standings', labelKey: 'nav.standings', Icon: IconTrophy }
+const SEASONS: NavItem = { to: '/seasons', labelKey: 'nav.seasons', Icon: IconArchive }
+const LIVE: NavItem = { to: '/live', labelKey: 'nav.live', Icon: IconLive }
+
+const NAV: NavItem[] = [HOME, WEEKEND, SCHEDULE, STANDINGS, SEASONS, LIVE]
+
+/* Five is the most a phone tab bar can hold legibly at 393px. The season
+   archive is the one thing you're least likely to want mid-race-weekend, so it
+   stays in the desktop rail and is reachable from the schedule screen. */
+const MOBILE_NAV: NavItem[] = [HOME, WEEKEND, SCHEDULE, STANDINGS, LIVE]
 
 function Brand() {
   const { t } = useTranslation()
@@ -104,7 +110,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-line bg-bg pb-[env(safe-area-inset-bottom)] lg:hidden"
           aria-label={t('nav.home')}
         >
-          {NAV.map(({ to, labelKey, Icon }) => (
+          {MOBILE_NAV.map(({ to, labelKey, Icon }) => (
             <NavLink
               key={to}
               to={to}

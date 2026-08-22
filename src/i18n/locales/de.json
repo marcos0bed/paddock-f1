@@ -10,7 +10,8 @@
     "drivers": "Fahrer",
     "teams": "Teams",
     "seasons": "Saisons",
-    "live": "Live"
+    "live": "Live",
+    "weekend": "Wochenende"
   },
   "common": {
     "loading": "Wird geladen",
@@ -170,5 +171,18 @@
     "teamColour": "Teamfarbe",
     "positionGained": "{{count}} Plätze gutgemacht",
     "positionLost": "{{count}} Plätze verloren"
+  },
+  "weekend": {
+    "title": "Rennwochenende",
+    "live": "Live",
+    "done": "Fertig",
+    "upcoming": "Bald",
+    "noResults": "Keine Ergebnisse für diese Session",
+    "noWeekend": "Kein Rennwochenende im Gange",
+    "total": "Zeit",
+    "best": "Beste",
+    "lapsShort": "Runden",
+    "restrictedTitle": "Ergebnisse sind gerade gesperrt",
+    "restrictedBody": "Der kostenlose OpenF1-Tarif blockiert alle Anfragen von 30 Minuten vor einer Session bis 30 Minuten nach ihrem Ende. Danach sind sie wieder verfügbar."
   }
 }
