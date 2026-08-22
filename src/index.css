@@ -1,0 +1,199 @@
+@import 'tailwindcss';
+
+/* ─────────────────────────────────────────────────────────────
+   Paddock — "pit wall" design system
+   Dark, data-dense, monospaced timing. Team colour is the only
+   chromatic accent that changes; everything else stays neutral so
+   the data reads first.
+   ───────────────────────────────────────────────────────────── */
+
+@theme {
+  /* Surfaces — near-black with a cool cast, like a timing monitor */
+  --color-bg: #08080c;
+  --color-surface: #101017;
+  --color-surface-2: #16161f;
+  --color-surface-3: #1d1d29;
+  --color-line: #262633;
+  --color-line-bright: #34344a;
+
+  /* Text */
+  --color-ink: #ececf3;
+  --color-ink-dim: #9a9aad;
+  --color-ink-faint: #61617a;
+
+  /* Brand */
+  --color-speed: #e10600; /* F1 red — headers, live pulse */
+  --color-signal: #00e0ff; /* cyan — interactive/data highlight */
+
+  /* Timing semantics (broadcast convention) */
+  --color-best-session: #b026ff; /* purple — overall session best */
+  --color-best-personal: #00d34e; /* green — personal best */
+  --color-slower: #f5c400; /* yellow — slower than personal best */
+  --color-gain: #00d34e;
+  --color-loss: #ff3b4e;
+
+  /* Flags */
+  --color-flag-yellow: #ffd400;
+  --color-flag-red: #ff1f2e;
+  --color-flag-sc: #ffb000;
+
+  /* Tyres */
+  --color-tyre-soft: #ff3333;
+  --color-tyre-medium: #ffd400;
+  --color-tyre-hard: #f0f0f0;
+  --color-tyre-inter: #43d15f;
+  --color-tyre-wet: #2f7fff;
+
+  /* Type */
+  --font-display: 'Barlow Condensed', 'Oswald', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    background: var(--color-bg);
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-bg);
+    color: var(--color-ink);
+    overscroll-behavior-y: none;
+    /* Faint carbon-weave texture so large dark areas aren't flat */
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgb(225 6 0 / 0.09), transparent),
+      repeating-linear-gradient(
+        45deg,
+        rgb(255 255 255 / 0.012) 0px,
+        rgb(255 255 255 / 0.012) 1px,
+        transparent 1px,
+        transparent 4px
+      );
+    background-attachment: fixed;
+  }
+
+  /* Numbers must never jitter as they tick */
+  .tnum,
+  time,
+  [data-timing] {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: 0.01em;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-line-bright);
+    border-radius: 99px;
+    border: 3px solid var(--color-bg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Section label — small caps technical header */
+  .eyebrow {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+
+  /* Panel — the base container of the pit wall */
+  .panel {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    position: relative;
+  }
+
+  /* Team colour bar down the left edge of a row */
+  .team-edge {
+    box-shadow: inset 3px 0 0 0 var(--team, var(--color-line-bright));
+  }
+
+  /* Live pulse dot */
+  .pulse-live::before {
+    content: '';
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 99px;
+    background: var(--color-speed);
+    margin-right: 0.5rem;
+    animation: pulse-ring 1.6s var(--ease-out-expo) infinite;
+  }
+
+  /* Diagonal hazard stripes, for flag/limited states */
+  .hazard {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--hazard, var(--color-flag-yellow)) 0px,
+      var(--hazard, var(--color-flag-yellow)) 8px,
+      transparent 8px,
+      transparent 16px
+    );
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgb(225 6 0 / 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 0.5rem rgb(225 6 0 / 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgb(225 6 0 / 0);
+  }
+}
+
+@keyframes sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(200%);
+  }
+}
+
+/* Skeleton shimmer for loading rows */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.05), transparent);
+  animation: sweep 1.4s infinite;
+}

@@ -1,0 +1,174 @@
+{
+  "app": {
+    "name": "Paddock",
+    "tagline": "Fórmula 1, a pie de pista"
+  },
+  "nav": {
+    "home": "Inicio",
+    "schedule": "Calendario",
+    "standings": "Mundial",
+    "drivers": "Pilotos",
+    "teams": "Equipos",
+    "seasons": "Temporadas",
+    "live": "En directo"
+  },
+  "common": {
+    "loading": "Cargando",
+    "error": "Algo ha salido mal",
+    "errorBody": "No hemos podido cargar estos datos. Comprueba tu conexión e inténtalo de nuevo.",
+    "retry": "Reintentar",
+    "notFound": "No encontrado",
+    "notFoundBody": "Esta página no existe. Puede que la hayan movido.",
+    "back": "Atrás",
+    "season": "Temporada",
+    "round": "Ronda",
+    "roundOf": "Ronda {{round}} de {{total}}",
+    "viewAll": "Ver todo",
+    "offline": "Estás sin conexión — mostrando datos guardados",
+    "noData": "No hay datos disponibles",
+    "points": "pts",
+    "points_one": "punto",
+    "points_other": "puntos",
+    "win_one": "victoria",
+    "win_other": "victorias",
+    "close": "Cerrar"
+  },
+  "home": {
+    "nextRace": "Próxima carrera",
+    "liveNow": "En directo ahora",
+    "seasonProgress": "Progreso de la temporada",
+    "lastRace": "Última carrera",
+    "championshipLeader": "Líder del Mundial",
+    "constructorLeader": "Equipo líder",
+    "raceStartsIn": "La carrera empieza en",
+    "weekendSchedule": "Horarios del fin de semana",
+    "seasonOver": "Temporada finalizada",
+    "seasonNotStarted": "La temporada aún no ha empezado",
+    "raceDetails": "Detalles de la carrera"
+  },
+  "countdown": {
+    "days": "días",
+    "hours": "h",
+    "minutes": "min",
+    "seconds": "s",
+    "day_one": "día",
+    "day_other": "días"
+  },
+  "session": {
+    "fp1": "Libres 1",
+    "fp2": "Libres 2",
+    "fp3": "Libres 3",
+    "qualifying": "Clasificación",
+    "sprintQualifying": "Clasificación Sprint",
+    "sprint": "Sprint",
+    "race": "Carrera",
+    "sprintWeekend": "Fin de semana con Sprint"
+  },
+  "schedule": {
+    "title": "Calendario de carreras",
+    "upcoming": "Próximas",
+    "completed": "Disputadas",
+    "winner": "Ganador",
+    "noRaces": "No hay carreras programadas para esta temporada"
+  },
+  "standings": {
+    "title": "Campeonato",
+    "drivers": "Pilotos",
+    "constructors": "Constructores",
+    "pos": "Pos",
+    "driver": "Piloto",
+    "team": "Equipo",
+    "pts": "Pts",
+    "wins": "Vict.",
+    "afterRound": "Tras la ronda {{round}}",
+    "leaderGap": "a {{gap}} del líder",
+    "champion": "Campeón"
+  },
+  "race": {
+    "results": "Resultado de la carrera",
+    "qualifying": "Clasificación",
+    "sprint": "Sprint",
+    "grid": "Parrilla",
+    "laps": "Vueltas",
+    "status": "Estado",
+    "time": "Tiempo",
+    "gap": "Dif.",
+    "fastestLap": "Vuelta rápida",
+    "podium": "Podio",
+    "circuit": "Circuito",
+    "noResults": "Los resultados aún no están disponibles",
+    "notRunYet": "Esta carrera aún no se ha disputado",
+    "dnf": "DNF",
+    "avgSpeed": "Vel. media"
+  },
+  "driver": {
+    "title": "Pilotos",
+    "number": "Número",
+    "born": "Nacimiento",
+    "nationality": "Nacionalidad",
+    "championships": "Títulos",
+    "careerWins": "Victorias en su carrera",
+    "podiums": "Podios",
+    "seasonResults": "Esta temporada",
+    "career": "Trayectoria",
+    "bestFinish": "Mejor resultado",
+    "currentTeam": "Equipo actual",
+    "noDrivers": "No se han encontrado pilotos"
+  },
+  "team": {
+    "title": "Equipos",
+    "base": "Sede",
+    "drivers": "Pilotos",
+    "championships": "Títulos de constructores",
+    "seasonPoints": "Puntos esta temporada",
+    "history": "Historial en el Mundial",
+    "noTeams": "No se han encontrado equipos"
+  },
+  "seasons": {
+    "title": "Archivo de temporadas",
+    "subtitle": "Todos los campeonatos del mundo de Fórmula 1 desde 1950",
+    "worldChampion": "Campeón del mundo",
+    "constructorChampion": "Campeón de constructores",
+    "explore": "Explorar {{season}}"
+  },
+  "live": {
+    "title": "Tiempos en directo",
+    "noSession": "No hay ninguna sesión en marcha",
+    "noSessionBody": "Los tiempos en directo aparecen aquí cuando hay una sesión de Fórmula 1 en pista. Consulta el calendario para ver la próxima.",
+    "connecting": "Conectando con la señal de cronometraje",
+    "position": "Pos",
+    "driver": "Piloto",
+    "gapToLeader": "Líder",
+    "interval": "Interv.",
+    "lastLap": "Última vuelta",
+    "bestLap": "Mejor vuelta",
+    "tyre": "Neum.",
+    "lap": "Vuelta {{current}} / {{total}}",
+    "raceControl": "Dirección de carrera",
+    "pit": "PIT",
+    "out": "OUT",
+    "restricted": {
+      "title": "Los tiempos en directo necesitan una clave de patrocinador",
+      "body": "El plan gratuito de OpenF1 bloquea todas las peticiones —incluido el histórico— desde 30 minutos antes de una sesión hasta 30 minutos después de que termine. Añade una clave de API de patrocinador para desbloquear los datos en directo.",
+      "cta": "Ver los planes de OpenF1",
+      "dismiss": "Prefiero ver el histórico",
+      "howTo": "Añade tu clave como VITE_OPENF1_API_KEY en .env.local y reinicia la app."
+    }
+  },
+  "language": {
+    "label": "Idioma",
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "it": "Italiano"
+  },
+  "a11y": {
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "changeLanguage": "Cambiar idioma",
+    "teamColour": "Color del equipo",
+    "positionGained": "Ha ganado {{count}} posiciones",
+    "positionLost": "Ha perdido {{count}} posiciones"
+  }
+}

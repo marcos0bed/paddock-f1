@@ -1,0 +1,174 @@
+{
+  "app": {
+    "name": "Paddock",
+    "tagline": "Formula 1, trackside"
+  },
+  "nav": {
+    "home": "Home",
+    "schedule": "Schedule",
+    "standings": "Standings",
+    "drivers": "Drivers",
+    "teams": "Teams",
+    "seasons": "Seasons",
+    "live": "Live"
+  },
+  "common": {
+    "loading": "Loading",
+    "error": "Something went wrong",
+    "errorBody": "We couldn't load this data. Check your connection and try again.",
+    "retry": "Try again",
+    "notFound": "Not found",
+    "notFoundBody": "This page doesn't exist. It may have been moved.",
+    "back": "Back",
+    "season": "Season",
+    "round": "Round",
+    "roundOf": "Round {{round}} of {{total}}",
+    "viewAll": "View all",
+    "offline": "You're offline — showing saved data",
+    "noData": "No data available",
+    "points": "pts",
+    "points_one": "point",
+    "points_other": "points",
+    "win_one": "win",
+    "win_other": "wins",
+    "close": "Close"
+  },
+  "home": {
+    "nextRace": "Next race",
+    "liveNow": "Live now",
+    "seasonProgress": "Season progress",
+    "lastRace": "Last race",
+    "championshipLeader": "Championship leader",
+    "constructorLeader": "Leading team",
+    "raceStartsIn": "Race starts in",
+    "weekendSchedule": "Weekend schedule",
+    "seasonOver": "Season complete",
+    "seasonNotStarted": "Season hasn't started yet",
+    "raceDetails": "Race details"
+  },
+  "countdown": {
+    "days": "days",
+    "hours": "hrs",
+    "minutes": "min",
+    "seconds": "sec",
+    "day_one": "day",
+    "day_other": "days"
+  },
+  "session": {
+    "fp1": "Practice 1",
+    "fp2": "Practice 2",
+    "fp3": "Practice 3",
+    "qualifying": "Qualifying",
+    "sprintQualifying": "Sprint Qualifying",
+    "sprint": "Sprint",
+    "race": "Race",
+    "sprintWeekend": "Sprint weekend"
+  },
+  "schedule": {
+    "title": "Race calendar",
+    "upcoming": "Upcoming",
+    "completed": "Completed",
+    "winner": "Winner",
+    "noRaces": "No races scheduled for this season"
+  },
+  "standings": {
+    "title": "Championship",
+    "drivers": "Drivers",
+    "constructors": "Constructors",
+    "pos": "Pos",
+    "driver": "Driver",
+    "team": "Team",
+    "pts": "Pts",
+    "wins": "Wins",
+    "afterRound": "After round {{round}}",
+    "leaderGap": "{{gap}} behind",
+    "champion": "Champion"
+  },
+  "race": {
+    "results": "Race result",
+    "qualifying": "Qualifying",
+    "sprint": "Sprint",
+    "grid": "Grid",
+    "laps": "Laps",
+    "status": "Status",
+    "time": "Time",
+    "gap": "Gap",
+    "fastestLap": "Fastest lap",
+    "podium": "Podium",
+    "circuit": "Circuit",
+    "noResults": "Results aren't available yet",
+    "notRunYet": "This race hasn't been run yet",
+    "dnf": "DNF",
+    "avgSpeed": "Avg speed"
+  },
+  "driver": {
+    "title": "Drivers",
+    "number": "Number",
+    "born": "Born",
+    "nationality": "Nationality",
+    "championships": "Titles",
+    "careerWins": "Career wins",
+    "podiums": "Podiums",
+    "seasonResults": "This season",
+    "career": "Career",
+    "bestFinish": "Best finish",
+    "currentTeam": "Current team",
+    "noDrivers": "No drivers found"
+  },
+  "team": {
+    "title": "Teams",
+    "base": "Base",
+    "drivers": "Drivers",
+    "championships": "Constructors' titles",
+    "seasonPoints": "Points this season",
+    "history": "Championship history",
+    "noTeams": "No teams found"
+  },
+  "seasons": {
+    "title": "Season archive",
+    "subtitle": "Every Formula 1 world championship since 1950",
+    "worldChampion": "World Champion",
+    "constructorChampion": "Constructors' Champion",
+    "explore": "Explore {{season}}"
+  },
+  "live": {
+    "title": "Live timing",
+    "noSession": "No session running",
+    "noSessionBody": "Live timing appears here when a Formula 1 session is on track. Check the schedule for the next one.",
+    "connecting": "Connecting to timing feed",
+    "position": "Pos",
+    "driver": "Driver",
+    "gapToLeader": "Leader",
+    "interval": "Interval",
+    "lastLap": "Last lap",
+    "bestLap": "Best lap",
+    "tyre": "Tyre",
+    "lap": "Lap {{current}} / {{total}}",
+    "raceControl": "Race control",
+    "pit": "PIT",
+    "out": "OUT",
+    "restricted": {
+      "title": "Live timing needs a sponsor key",
+      "body": "OpenF1's free tier blocks all requests — history included — from 30 minutes before a session until 30 minutes after it ends. Add a sponsor API key to unlock live data.",
+      "cta": "See OpenF1 plans",
+      "dismiss": "Browse history instead",
+      "howTo": "Add your key as VITE_OPENF1_API_KEY in .env.local, then restart the app."
+    }
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "es": "Español",
+    "fr": "Français",
+    "de": "Deutsch",
+    "it": "Italiano"
+  },
+  "a11y": {
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "changeLanguage": "Change language",
+    "teamColour": "Team colour",
+    "positionGained": "Gained {{count}} places",
+    "positionLost": "Lost {{count}} places"
+  }
+}
