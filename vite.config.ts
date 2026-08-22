@@ -51,12 +51,17 @@ export default defineConfig({
         clientsClaim: true,
         runtimeCaching: [
           {
-            // Historical data is immutable once a race is over — cache hard.
+            // Historical data is immutable once a race is over — cache hard,
+            // and generously: a single driver/constructor career view fans out
+            // to one request per season (Ferrari alone is 77), so a small
+            // budget here gets blown by one page visit and evicts everything
+            // else. StaleWhileRevalidate still refreshes in the background on
+            // every hit, so a bigger budget costs storage, not freshness.
             urlPattern: /^https:\/\/api\.jolpi\.ca\/.*/i,
             handler: 'StaleWhileRevalidate',
             options: {
               cacheName: 'jolpica-f1',
-              expiration: { maxEntries: 300, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              expiration: { maxEntries: 3000, maxAgeSeconds: 60 * 60 * 24 * 90 },
               cacheableResponse: { statuses: [0, 200] },
             },
           },
