@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'motion/react'
 
+import { CircuitOutline } from './CircuitOutline'
 import { useCountdown, useLocale } from '../hooks/useF1'
 import { useRaceName } from '../hooks/useRaceName'
 import { countryIso, flagEmoji, localizedCountry } from '../lib/countries'
@@ -60,11 +61,12 @@ export function NextRaceHero({ race, totalRounds }: { race: Race; totalRounds: n
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className="panel relative overflow-hidden"
     >
-      {/* Track-surface glow behind the headline */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-32 -right-20 h-72 w-72 rounded-full opacity-25 blur-3xl"
-        style={{ background: 'radial-gradient(circle, var(--color-speed), transparent 70%)' }}
+      {/* The circuit's own shape, traced from GPS data — not a photo, not
+          official media, just its outline as a watermark behind the headline. */}
+      <CircuitOutline
+        circuitId={race.Circuit.circuitId}
+        color="var(--color-speed)"
+        className="pointer-events-none absolute -top-6 -right-10 h-56 w-56 opacity-[0.18] sm:-top-8 sm:-right-12 sm:h-72 sm:w-72"
       />
       <div className="hazard absolute inset-x-0 top-0 h-1" style={{ ['--hazard' as string]: 'var(--color-speed)' }} />
 
