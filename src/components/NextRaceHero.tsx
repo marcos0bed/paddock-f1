@@ -62,11 +62,14 @@ export function NextRaceHero({ race, totalRounds }: { race: Race; totalRounds: n
       className="panel relative overflow-hidden"
     >
       {/* The circuit's own shape, traced from GPS data — not a photo, not
-          official media, just its outline as a watermark behind the headline. */}
+          official media, just its outline as a watermark behind the headline.
+          Kept fully inside the panel (no negative offsets): the section
+          clips overflow, and unlike a blurred glow, cropping an actual
+          recognisable shape defeats the point of showing it at all. */}
       <CircuitOutline
         circuitId={race.Circuit.circuitId}
         color="var(--color-speed)"
-        className="pointer-events-none absolute -top-6 -right-10 h-56 w-56 opacity-[0.18] sm:-top-8 sm:-right-12 sm:h-72 sm:w-72"
+        className="pointer-events-none absolute top-4 right-4 h-44 w-44 opacity-[0.18] sm:top-6 sm:right-8 sm:h-60 sm:w-60"
       />
       <div className="hazard absolute inset-x-0 top-0 h-1" style={{ ['--hazard' as string]: 'var(--color-speed)' }} />
 
