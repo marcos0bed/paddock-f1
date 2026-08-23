@@ -127,6 +127,18 @@ export function NextRaceHero({
             {t('home.raceInProgress')}
             <span className="ml-auto text-lg">→</span>
           </Link>
+        ) : start.getTime() <= Date.now() ? (
+          // Race already ran today but the live window has passed — still
+          // today's race, just point at results instead of an empty slot
+          // where a countdown to the past would otherwise go.
+          <Link
+            to={`/race/${race.season}/${race.round}`}
+            className="mt-7 flex items-center gap-3 border border-line-bright px-4 py-3.5 text-sm font-700 tracking-widest text-ink-dim uppercase transition hover:border-speed hover:text-speed"
+          >
+            <span aria-hidden>🏁</span>
+            {t('home.seeResults')}
+            <span className="ml-auto text-lg">→</span>
+          </Link>
         ) : (
           countdown &&
           countdown.total > 0 && (

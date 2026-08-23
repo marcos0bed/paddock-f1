@@ -123,20 +123,29 @@ export function useConstructorStandingsHistory(constructorId: string) {
 }
 
 /**
- * A race isn't "over" the instant it starts — it's still running for roughly
- * two hours, longer with a red flag. Jolpica gives no end time, so this is a
- * generous estimate (same order of magnitude as the race-session window used
- * to detect OpenF1 blocks in lib/weekendWindow.ts): long enough that a race
- * in progress is never mistaken for finished, short enough that a real
- * finished race doesn't linger as "next".
+ * A race is "live" — pulsing badge, no countdown — for roughly two hours
+ * after it starts, longer with a red flag. Jolpica gives no end time, so
+ * this is a generous estimate (same order of magnitude as the race-session
+ * window used to detect OpenF1 blocks in lib/weekendWindow.ts).
  */
 const RACE_DURATION_MS = 3.5 * 60 * 60 * 1000
 
+/** Midnight at the start of the day after `date`, in the device's local time. */
+function startOfNextLocalDay(date: Date): Date {
+  const next = new Date(date)
+  next.setHours(24, 0, 0, 0)
+  return next
+}
+
 /**
- * Split the calendar around "now". A race only counts as past once it's
- * actually likely to be over — previously this flipped the instant the start
- * time elapsed, which meant Home jumped straight to next round's countdown
- * while the current race was still being run.
+ * Split the calendar around "now". Two separate questions, deliberately kept
+ * apart:
+ *   - is the race live right now (for the pulsing badge) — a ~2h window.
+ *   - is it still "today's race" for the purposes of what Home leads with —
+ *     the whole calendar day it's on, local time, regardless of how long ago
+ *     it actually finished. A race that wrapped up at 17:00 shouldn't hand
+ *     the hero to next round's countdown at 20:30 the same evening; it
+ *     should still be the featured race until the day turns over.
  */
 export function useSeasonState(season: string | number = 'current') {
   const query = useSchedule(season)
@@ -152,12 +161,14 @@ export function useSeasonState(season: string | number = 'current') {
     const upcoming: Race[] = []
     let live: Race | null = null
     for (const r of races) {
-      const start = raceDate(r.date, r.time).getTime()
-      if (now < start) {
+      const start = raceDate(r.date, r.time)
+      const startMs = start.getTime()
+      if (now < startMs) {
         upcoming.push(r)
-      } else if (now <= start + RACE_DURATION_MS) {
-        // Started, probably still running — stays "this weekend", not past.
-        live = r
+      } else if (now < startOfNextLocalDay(start).getTime()) {
+        // Race day, start to end of day: still "next" no matter how long ago
+        // it actually finished — only the live-badge window is duration-based.
+        if (now <= startMs + RACE_DURATION_MS) live = r
         upcoming.push(r)
       } else {
         past.push(r)

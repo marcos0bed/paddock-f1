@@ -47,7 +47,8 @@
     "seasonOver": "Saison beendet",
     "seasonNotStarted": "Die Saison hat noch nicht begonnen",
     "raceDetails": "Renndetails",
-    "raceInProgress": "Rennen läuft"
+    "raceInProgress": "Rennen läuft",
+    "seeResults": "Ergebnisse ansehen"
   },
   "countdown": {
     "days": "Tage",
