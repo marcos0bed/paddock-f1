@@ -123,28 +123,51 @@ export function useConstructorStandingsHistory(constructorId: string) {
 }
 
 /**
- * Split the calendar around "now". A race counts as past once its start time
- * has elapsed, so the hero flips to the next round while the flag is still out
- * rather than a day later.
+ * A race isn't "over" the instant it starts — it's still running for roughly
+ * two hours, longer with a red flag. Jolpica gives no end time, so this is a
+ * generous estimate (same order of magnitude as the race-session window used
+ * to detect OpenF1 blocks in lib/weekendWindow.ts): long enough that a race
+ * in progress is never mistaken for finished, short enough that a real
+ * finished race doesn't linger as "next".
+ */
+const RACE_DURATION_MS = 3.5 * 60 * 60 * 1000
+
+/**
+ * Split the calendar around "now". A race only counts as past once it's
+ * actually likely to be over — previously this flipped the instant the start
+ * time elapsed, which meant Home jumped straight to next round's countdown
+ * while the current race was still being run.
  */
 export function useSeasonState(season: string | number = 'current') {
   const query = useSchedule(season)
 
   const derived = useMemo(() => {
     const races = query.data ?? []
-    if (races.length === 0) return { races: [], next: null, last: null, past: [], upcoming: [] }
+    if (races.length === 0) {
+      return { races: [], next: null, last: null, past: [], upcoming: [], live: null }
+    }
 
     const now = Date.now()
     const past: Race[] = []
     const upcoming: Race[] = []
+    let live: Race | null = null
     for (const r of races) {
-      if (raceDate(r.date, r.time).getTime() < now) past.push(r)
-      else upcoming.push(r)
+      const start = raceDate(r.date, r.time).getTime()
+      if (now < start) {
+        upcoming.push(r)
+      } else if (now <= start + RACE_DURATION_MS) {
+        // Started, probably still running — stays "this weekend", not past.
+        live = r
+        upcoming.push(r)
+      } else {
+        past.push(r)
+      }
     }
     return {
       races,
       past,
       upcoming,
+      live,
       next: upcoming[0] ?? null,
       last: past[past.length - 1] ?? null,
     }

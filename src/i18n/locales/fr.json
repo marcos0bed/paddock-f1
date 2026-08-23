@@ -46,7 +46,8 @@
     "weekendSchedule": "Programme du week-end",
     "seasonOver": "Saison terminée",
     "seasonNotStarted": "La saison n'a pas encore commencé",
-    "raceDetails": "Détails de la course"
+    "raceDetails": "Détails de la course",
+    "raceInProgress": "Course en cours"
   },
   "countdown": {
     "days": "jours",

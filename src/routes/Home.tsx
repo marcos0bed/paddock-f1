@@ -178,7 +178,11 @@ export function Home() {
     <Page>
       <div className="flex flex-col gap-5">
         {season.next ? (
-          <NextRaceHero race={season.next} totalRounds={season.races.length} />
+          <NextRaceHero
+            race={season.next}
+            totalRounds={season.races.length}
+            isLive={season.next === season.live}
+          />
         ) : (
           <div className="panel px-6 py-12 text-center">
             <p className="eyebrow mb-2">{t('common.season')}</p>

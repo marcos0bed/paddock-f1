@@ -45,7 +45,15 @@ function CountdownCell({ value, label }: { value: number; label: string }) {
   )
 }
 
-export function NextRaceHero({ race, totalRounds }: { race: Race; totalRounds: number }) {
+export function NextRaceHero({
+  race,
+  totalRounds,
+  isLive = false,
+}: {
+  race: Race
+  totalRounds: number
+  isLive?: boolean
+}) {
   const { t } = useTranslation()
   const locale = useLocale()
   const raceName = useRaceName()
@@ -75,9 +83,11 @@ export function NextRaceHero({ race, totalRounds }: { race: Race; totalRounds: n
 
       <div className="relative p-5 sm:p-8">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <span className="eyebrow flex items-center gap-1.5 text-speed">
-            <span aria-hidden>🏎️</span>
-            {t('home.nextRace')}
+          <span
+            className={`eyebrow flex items-center gap-1.5 text-speed ${isLive ? 'pulse-live' : ''}`}
+          >
+            {!isLive && <span aria-hidden>🏎️</span>}
+            {isLive ? t('home.liveNow') : t('home.nextRace')}
           </span>
           <span className="h-3 w-px bg-line-bright" />
           <span className="eyebrow">
@@ -109,25 +119,36 @@ export function NextRaceHero({ race, totalRounds }: { race: Race; totalRounds: n
           {formatDateLong(start, locale)} · {formatTime(start, locale)}
         </p>
 
-        {countdown && countdown.total > 0 && (
-          <div className="mt-7">
-            <p className="eyebrow mb-3">{t('home.raceStartsIn')}</p>
-            <div className="flex items-start gap-5 sm:gap-9">
-              <CountdownCell value={countdown.days} label={t('countdown.days')} />
-              <span className="font-mono text-3xl leading-none font-300 text-line-bright sm:text-5xl lg:text-6xl">
-                :
-              </span>
-              <CountdownCell value={countdown.hours} label={t('countdown.hours')} />
-              <span className="font-mono text-3xl leading-none font-300 text-line-bright sm:text-5xl lg:text-6xl">
-                :
-              </span>
-              <CountdownCell value={countdown.minutes} label={t('countdown.minutes')} />
-              <span className="font-mono text-3xl leading-none font-300 text-line-bright sm:text-5xl lg:text-6xl">
-                :
-              </span>
-              <CountdownCell value={countdown.seconds} label={t('countdown.seconds')} />
+        {isLive ? (
+          <Link
+            to="/weekend"
+            className="pulse-live mt-7 flex items-center gap-3 border border-speed/40 bg-speed/5 px-4 py-3.5 text-sm font-700 tracking-widest text-speed uppercase transition hover:bg-speed/10"
+          >
+            {t('home.raceInProgress')}
+            <span className="ml-auto text-lg">→</span>
+          </Link>
+        ) : (
+          countdown &&
+          countdown.total > 0 && (
+            <div className="mt-7">
+              <p className="eyebrow mb-3">{t('home.raceStartsIn')}</p>
+              <div className="flex items-start gap-5 sm:gap-9">
+                <CountdownCell value={countdown.days} label={t('countdown.days')} />
+                <span className="font-mono text-3xl leading-none font-300 text-line-bright sm:text-5xl lg:text-6xl">
+                  :
+                </span>
+                <CountdownCell value={countdown.hours} label={t('countdown.hours')} />
+                <span className="font-mono text-3xl leading-none font-300 text-line-bright sm:text-5xl lg:text-6xl">
+                  :
+                </span>
+                <CountdownCell value={countdown.minutes} label={t('countdown.minutes')} />
+                <span className="font-mono text-3xl leading-none font-300 text-line-bright sm:text-5xl lg:text-6xl">
+                  :
+                </span>
+                <CountdownCell value={countdown.seconds} label={t('countdown.seconds')} />
+              </div>
             </div>
-          </div>
+          )
         )}
       </div>
 
